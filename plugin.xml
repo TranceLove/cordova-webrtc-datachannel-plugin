@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.nxtomo.cordova.ios.webrtc" version="0.0.1">
+    <name>iosWebRTCPlugin</name>
+    <description>iOS WebRTC Plugin</description>
+    <platform name="ios">
+        <js-module src="www/iosRTCPeerConnection.js" name="iosRTCPeerConnection">
+            <clobbers target="window.iosRTCPeerConnection" />
+        </js-module>
+        <js-module src="www/iosRTCSessionDescription.js" name="iosRTCSessionDescription">
+            <clobbers target="window.iosRTCSessionDescription" />
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="iosWebRTCPlugin">
+                <param name="ios-package" value="iosWebRTCPlugin"/>
+            </feature>
+        </config-file>
+        <header-file src="src/ios/iosWebRTCPlugin.h" />
+        <source-file src="src/ios/iosWebRTCPlugin.m" />
+    </platform>
+</plugin>
