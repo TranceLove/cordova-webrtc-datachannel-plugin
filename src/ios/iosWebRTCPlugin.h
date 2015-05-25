@@ -12,6 +12,7 @@
 #import "RTCICEServer.h"
 #import "RTCMediaConstraints.h"
 #import "RTCPeerConnectionFactory.h"
+#import "RTCPeerConnectionHolder+Internal.h"
 
 @interface iosWebRTCPlugin : CDVPlugin
 

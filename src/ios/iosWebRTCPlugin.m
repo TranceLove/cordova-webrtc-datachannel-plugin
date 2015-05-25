@@ -68,7 +68,10 @@ NSMutableDictionary *_connections;
                                                                   constraints:constraints
                                                                      delegate:nil];
         
-        [_connections setValue:connection forKey:connectionID];
+        RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
+                                                                                                 connectionID:connectionID];
+        
+        [_connections setValue:connectionHolder forKey:connectionID];
         
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         
