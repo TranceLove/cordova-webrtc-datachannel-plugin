@@ -17,7 +17,8 @@
 @property (atomic,strong) NSString* connectionID;
 @property (atomic,strong) RTCPeerConnection* connection;
 @property (atomic,strong) RTCMediaConstraints* mediaConstraints;
-@property (nonatomic) NSString* provisionalCallbackID;
+//@property (nonatomic) NSString* provisionalCallbackID;
+@property (nonatomic) NSMutableDictionary *dataChannels;
 
 -(id)initWithRTCPeerConnection: (RTCPeerConnection*) connection
               mediaConstraints: (RTCMediaConstraints*) mediaConstraints

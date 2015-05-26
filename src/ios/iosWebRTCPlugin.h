@@ -18,6 +18,8 @@
 
 -(void)createRTCPeerConnection:(CDVInvokedUrlCommand*)command;
 
+-(void)createDataChannel:(CDVInvokedUrlCommand*)command;
+
 -(void)createLocalOffer:(CDVInvokedUrlCommand*)command;
 
 -(void)createAnswer:(CDVInvokedUrlCommand*)command;

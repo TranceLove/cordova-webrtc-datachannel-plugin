@@ -8,6 +8,7 @@
 
 #import "iosWebRTCPlugin.h"
 #import "RTCPair.h"
+#import "RTCDataChannel.h"
 #import "PeerConnectionObserver.h"
 #import "RTCSessionDescriptionObserver+Internal.h"
 
@@ -81,6 +82,30 @@ NSMutableDictionary *_connections;
         [_connections setValue:connectionHolder forKey:connectionID];
         
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connectionID, @"connectionID", nil]];
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+-(void)createDataChannel:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString *connectionID = [command argumentAtIndex:0];
+        NSString *label = [command argumentAtIndex:1];
+        
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        RTCDataChannelInit *config = [RTCDataChannelInit init];
+        
+        RTCDataChannel *dataChannel = [holder.connection createDataChannelWithLabel:label
+                                                                             config:config];
+        
+        [holder.dataChannels setValue:dataChannel
+                               forKey:label];
+        
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connectionID, @"connectionID",
+                                                                                                                   label, @"label",
+                                                                                                                   nil]];
         
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];

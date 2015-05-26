@@ -21,6 +21,7 @@
         self.connectionID = connectionID;
         self.mediaConstraints = mediaConstraints;
         self.connection = connection;
+        self.dataChannels = [[NSMutableDictionary alloc]init];
     }
     
     return self;
