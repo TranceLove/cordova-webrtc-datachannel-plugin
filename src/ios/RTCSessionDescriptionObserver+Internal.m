@@ -26,23 +26,23 @@
         _command = command;
         _delegate = commandDelegate;
         _connection = connection;
-        
+
     }
     return self;
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didCreateSessionDescription:(RTCSessionDescription *)sdp error:(NSError *)error
 {
-    NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys:@"type", sdp.type, @"sdp", sdp.description, nil];
+    NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys: sdp.type, @"type", sdp.description, @"sdp", nil];
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                             messageAsDictionary:dict];
-    
+
     [_delegate sendPluginResult:result callbackId:_command.callbackId];
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didSetSessionDescriptionWithError:(NSError *)error
 {
-    
+
 }
 
 @end

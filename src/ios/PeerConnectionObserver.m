@@ -43,9 +43,9 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCICECandidate *)candidate
 {
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                            @"sdp", candidate.sdp,
-                            @"sdpMid", candidate.sdpMid,
-                            @"sdpMLineIndex", candidate.sdpMLineIndex,
+                            candidate.sdp, @"sdp",
+                            candidate.sdpMid, @"sdpMid",
+                            candidate.sdpMLineIndex, @"sdpMLineIndex",
                           nil];
 
     if([NSJSONSerialization isValidJSONObject:dict])
