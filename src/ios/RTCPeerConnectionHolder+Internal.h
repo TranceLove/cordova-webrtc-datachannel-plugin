@@ -10,14 +10,17 @@
 #define WebRTCApp_RTCPeerConnection_Internal_h
 
 #import "RTCPeerConnection.h"
+#import "RTCMediaConstraints.h"
 
 @interface RTCPeerConnectionHolder : NSObject
 
 @property (atomic,strong) NSString* connectionID;
 @property (atomic,strong) RTCPeerConnection* connection;
+@property (atomic,strong) RTCMediaConstraints* mediaConstraints;
 @property (nonatomic) NSString* provisionalCallbackID;
 
 -(id)initWithRTCPeerConnection: (RTCPeerConnection*) connection
+              mediaConstraints: (RTCMediaConstraints*) mediaConstraints
                   connectionID: (NSString*) connectionID;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "iosWebRTCPlugin.h"
+#import "RTCSessionDescriptionObserver+Internal.h"
 
 @implementation iosWebRTCPlugin
 
@@ -69,6 +70,7 @@ NSMutableDictionary *_connections;
                                                                      delegate:nil];
         
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
+                                                                                             mediaConstraints:constraints
                                                                                                  connectionID:connectionID];
         
         [_connections setValue:connectionHolder forKey:connectionID];
@@ -76,6 +78,76 @@ NSMutableDictionary *_connections;
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+}
+
+-(void)createLocalOffer:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString *connectionID = [command argumentAtIndex:0];
+        
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
+                                                                                                  command:command
+                                                                                               connection:holder];
+        
+        [holder.connection createOfferWithDelegate:observer
+                                       constraints:holder.mediaConstraints];
+    }];
+}
+
+-(void)createAnswer:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString *connectionID = [command argumentAtIndex:0];
+        
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
+                                                                                                  command:command
+                                                                                               connection:holder];
+        
+        [holder.connection createAnswerWithDelegate:observer
+                                        constraints:holder.mediaConstraints];
+    }];
+}
+
+-(void)setLocalOffer:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString *connectionID = [command argumentAtIndex:0];
+        NSDictionary *options = [command argumentAtIndex:1];
+        
+        RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
+        
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
+                                                                                                  command:command
+                                                                                               connection:holder];
+        
+        [holder.connection setLocalDescriptionWithDelegate:observer
+                                        sessionDescription:sdp];
+    }];
+}
+
+-(void)setRemoteOffer:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString *connectionID = [command argumentAtIndex:0];
+        NSDictionary *options = [command argumentAtIndex:1];
+        
+        RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
+        
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
+                                                                                                  command:command
+                                                                                               connection:holder];
+        
+        [holder.connection setRemoteDescriptionWithDelegate:observer
+                                         sessionDescription:sdp];
     }];
 }
 

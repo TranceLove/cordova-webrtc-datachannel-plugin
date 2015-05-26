@@ -11,11 +11,15 @@
 
 @implementation RTCPeerConnectionHolder
 
--(id)initWithRTCPeerConnection:(RTCPeerConnection *)connection connectionID:(NSString *)connectionID
+-(id)initWithRTCPeerConnection:(RTCPeerConnection *)connection
+              mediaConstraints:(RTCMediaConstraints *)mediaConstraints
+                  connectionID:(NSString *)connectionID
+
 {
     if([super init])
     {
         self.connectionID = connectionID;
+        self.mediaConstraints = mediaConstraints;
         self.connection = connection;
     }
     
