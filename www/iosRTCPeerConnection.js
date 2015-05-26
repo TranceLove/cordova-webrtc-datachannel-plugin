@@ -28,6 +28,7 @@ window.plugin.iosWebRTCPeerConnection = {
         }
     },
     iceGatheringStateChanged: function(connectionID, state){
+        console.log("Connection " + connectionID + " iceGatheringStateChanged: " + state);
         if(_peerConnections[connectionID])
         {
             var pc = _peerConnections[connectionID];
@@ -35,6 +36,7 @@ window.plugin.iosWebRTCPeerConnection = {
         }
     },
     oniceconnectionstatechange: function(connectionID, state){
+        console.log("Connection " + connectionID + " oniceconnectionstatechange: " + state);
         if(_peerConnections[connectionID])
         {
             var pc = _peerConnections[connectionID];
@@ -44,6 +46,7 @@ window.plugin.iosWebRTCPeerConnection = {
         }
     },
     onicecandidate: function(connectionID, iceCandidateJson){
+        console.log("Connection " + connectionID + " onicecandidate: " + iceCandidateJson);
         if(_peerConnections[connectionID])
         {
             var pc = _peerConnections[connectionID];
@@ -57,7 +60,7 @@ function RTCDataChannel(label, options)
 {
 	this.binaryType = "arraybuffer";
 	this.bufferedAmount = 0;
-	this.id = options.id || getRandomInt(0, 65535);
+	this.id = options.id || getRandomInt(0, 65535); //FIXME: unsafe
 	this.label = label
 	this.maxRetransmitTime = 65535
 	this.maxRetransmits = 65535
@@ -73,11 +76,11 @@ function RTCDataChannel(label, options)
 }
 
 RTCDataChannel.prototype.send = function(){
-	
+
 }
 
 RTCDataChannel.prototype.close = function(){
-	
+
 }
 
 function RTCPeerConnection(options)
@@ -98,41 +101,69 @@ function RTCPeerConnection(options)
     this.signalingState = "stable"
 
     exec(function(result){
+        console.log(result)
         self.connectionID = result.connectionID;
-        _peerConnections[connectionID] = self;
+        _peerConnections[result.connectionID] = self;
     }, function(err){
     	console.error(err);
     }, "iosWebRTCPlugin", "createRTCPeerConnection", [options]);
 }
 
 RTCPeerConnection.prototype.createDataChannel = function(label, options){
-	
-	var connectionID = this.connectionID;	
+
+	var connectionID = this.connectionID;
 	var retval = new RTCDataChannel(label, options);
-	
+
 	exec(function(result){
 		console.log(result)
 	}, function(err){
-		
+        console.error(err);
 	}, "iosWebRTCPlugin", "createDataChannel", [connectionID, label, options]);
-	
+
 	return retval;
 }
 
 RTCPeerConnection.prototype.createOffer = function(callback){
+
 	var connectionID = this.connectionID;
+
+    exec(function(result){
+        console.log(result)
+    }, function(err){
+        console.error(err);
+    }, "iosWebRTCPlugin", "createLocalOffer", [connectionID]);
 }
 
 RTCPeerConnection.prototype.createAnswer = function(callback){
-	var connectionID = this.connectionID;
+    var connectionID = this.connectionID;
+
+    exec(function(result){
+        console.log(result)
+    }, function(err){
+        console.error(err);
+    }, "iosWebRTCPlugin", "createAnswer", [connectionID]);
 }
 
 RTCPeerConnection.prototype.setLocalDescription = function(sessionDescription){
     this.localDescription = sessionDescription;
+    var connectionID = this.connectionID;
+
+    exec(function(result){
+        console.log(result)
+    }, function(err){
+        console.error(err);
+    }, "iosWebRTCPlugin", "setLocalOffer", [connectionID, sessionDescription]);
 }
 
 RTCPeerConnection.prototype.setRemoteDescription = function(sessionDescription){
     this.remoteDescription = sessionDescription;
+    var connectionID = this.connectionID;
+
+    exec(function(result){
+        console.log(result)
+    }, function(err){
+        console.error(err);
+    }, "iosWebRTCPlugin", "setRemoteOffer", [connectionID, sessionDescription]);
 }
 
 RTCPeerConnection.prototype.addIceCandidate = function(iceCandidate){
