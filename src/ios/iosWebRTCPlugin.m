@@ -7,6 +7,8 @@
 //
 
 #import "iosWebRTCPlugin.h"
+#import "RTCPair.h"
+#import "PeerConnectionObserver.h"
 #import "RTCSessionDescriptionObserver+Internal.h"
 
 @implementation iosWebRTCPlugin
@@ -51,23 +53,26 @@ NSMutableDictionary *_connections;
         
         //TODO: Implement video and audio bridges
         NSArray *mandatoryConstraints = [[NSArray alloc] initWithObjects:
-                                         [[NSDictionary alloc] initWithObjectsAndKeys:@"OfferToReceiveAudio", NO, nil],
-                                         [[NSDictionary alloc] initWithObjectsAndKeys:@"OfferToReceiveVideo", NO, nil],
+                                         [[RTCPair alloc] initWithKey: @"OfferToReceiveAudio" value: @"false"],
+                                         [[RTCPair alloc] initWithKey: @"OfferToReceiveVideo" value: @"false"],
                                          nil
                                          ];
         
         NSArray *optionalConstraints = [[NSArray alloc] initWithObjects:
-                                        [[NSDictionary alloc] initWithObjectsAndKeys:@"RtpDataChannels", YES, nil],
-                                        [[NSDictionary alloc] initWithObjectsAndKeys:@"DtlsSrtpKeyAgreement", YES, nil],
+                                        [[RTCPair alloc] initWithKey: @"RtpDataChannels" value: @"true"],
+                                        [[RTCPair alloc] initWithKey: @"DtlsSrtpKeyAgreement" value: @"true"],
                                         nil
                                         ];
         
         RTCMediaConstraints *constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints
                                                                                  optionalConstraints:optionalConstraints];
         
+        PeerConnectionObserver *observer = [[PeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
+                                                                               connectionID:connectionID];
+        
         RTCPeerConnection *connection = [factory peerConnectionWithICEServers:iceServers
                                                                   constraints:constraints
-                                                                     delegate:nil];
+                                                                     delegate:observer];
         
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
                                                                                              mediaConstraints:constraints
@@ -75,7 +80,7 @@ NSMutableDictionary *_connections;
         
         [_connections setValue:connectionHolder forKey:connectionID];
         
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connectionID, @"connectionID", nil]];
         
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];

@@ -14,18 +14,15 @@
 {
     id<CDVCommandDelegate> _delegate;
     NSString* _connectionID;
-    RTCPeerConnection* _connection;
 }
 
 -(id) initWithDelegate:(id<CDVCommandDelegate>)delegate
           connectionID:(NSString *)connectionID
-        peerConnection:(RTCPeerConnection *) connection
 {
     if([super init])
     {
         _delegate = delegate;
         _connectionID = connectionID;
-        _connection = connection;
     }
     return self;
 }
@@ -33,7 +30,7 @@
 //RTCPeerConnection.onaddstream
 -(void) peerConnection:(RTCPeerConnection *)peerConnection addedStream:(RTCMediaStream *)stream
 {
-    
+
 }
 
 //RTCPeerConnection.ondatachannel
@@ -50,7 +47,7 @@
                             @"sdpMid", candidate.sdpMid,
                             @"sdpMLineIndex", candidate.sdpMLineIndex,
                           nil];
-    
+
     if([NSJSONSerialization isValidJSONObject:dict])
     {
         NSError *err = nil;
@@ -58,10 +55,10 @@
                                         options:NSJSONWritingPrettyPrinted
                                           error:&err];
         NSString *iceCandidateJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        
+
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCConnection.onicecandidate('%@', %@);",
                         _connectionID, iceCandidateJson];
-        
+
         [_delegate evalJs:js];
     }
 }
@@ -70,7 +67,7 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCICEConnectionState)newState
 {
     NSString *state;
-    
+
     switch(newState)
     {
         case RTCICEConnectionNew:
@@ -95,9 +92,9 @@
             state = @"failed";
             break;
     }
-    
+
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", _connectionID, state];
-    
+
     [_delegate evalJs:js];
 }
 
@@ -105,7 +102,7 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection iceGatheringChanged:(RTCICEGatheringState)newState
 {
     NSString *state;
-    
+
     switch(newState)
     {
         case RTCICEGatheringNew:
@@ -118,23 +115,23 @@
             state = @"complete";
             break;
     }
-    
+
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", _connectionID, state];
-    
+
     [_delegate evalJs:js];
 }
 
 //RTCPeerConnection.onremovestream
 -(void) peerConnection:(RTCPeerConnection *)peerConnection removedStream:(RTCMediaStream *)stream
 {
-    
+
 }
 
 //No counter part. But still need to notify JS interface
 -(void) peerConnection:(RTCPeerConnection *)peerConnection signalingStateChanged:(RTCSignalingState)stateChanged
 {
     NSString *state;
-    
+
     switch(stateChanged)
     {
         case RTCSignalingClosed:
@@ -156,16 +153,16 @@
             state = @"stable";
             break;
     }
-    
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@11')", _connectionID, state];
-    
+
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", _connectionID, state];
+
     [_delegate evalJs:js];
 }
 
 //RTCPeerConnection.onnegotiationneeded
 -(void) peerConnectionOnRenegotiationNeeded:(RTCPeerConnection *)peerConnection
 {
-    
+
 }
 
 @end

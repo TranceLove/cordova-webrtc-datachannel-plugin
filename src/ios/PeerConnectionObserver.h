@@ -18,8 +18,7 @@
 @interface PeerConnectionObserver : NSObject<RTCPeerConnectionDelegate>
 
 -(id)initWithDelegate: (id<CDVCommandDelegate>) delegate
-         connectionID: (NSString*) connectionID
-       peerConnection: (RTCPeerConnection*) connection;
+         connectionID: (NSString*) connectionID;
 
 @end
 
