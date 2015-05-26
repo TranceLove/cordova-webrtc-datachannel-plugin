@@ -95,7 +95,7 @@ NSMutableDictionary *_connections;
         
         RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
         
-        RTCDataChannelInit *config = [RTCDataChannelInit init];
+        RTCDataChannelInit *config = [[RTCDataChannelInit alloc] init];
         
         RTCDataChannel *dataChannel = [holder.connection createDataChannelWithLabel:label
                                                                              config:config];
