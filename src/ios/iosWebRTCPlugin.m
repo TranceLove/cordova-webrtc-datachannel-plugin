@@ -9,6 +9,7 @@
 #import "iosWebRTCPlugin.h"
 #import "RTCPair.h"
 #import "RTCDataChannel.h"
+#import "RTCICECandidate.h"
 #import "PeerConnectionObserver.h"
 #import "RTCSessionDescriptionObserver+Internal.h"
 
@@ -178,6 +179,26 @@ NSMutableDictionary *_connections;
         
         [holder.connection setRemoteDescriptionWithDelegate:observer
                                          sessionDescription:sdp];
+    }];
+}
+
+-(void)addIceCandidate:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        NSString *connectionID = [command argumentAtIndex:0];
+        NSDictionary *iceCandidateInfo = [command argumentAtIndex:1];
+        
+        NSString *sdpMid = [iceCandidateInfo valueForKey:@"sdpMid"];
+        NSString *sdpMLineIndex = [iceCandidateInfo valueForKey:@"sdpMLineIndex"];
+        NSString *sdp = [iceCandidateInfo valueForKey:@"sdp"];
+        
+        RTCICECandidate *iceCandidate = [[RTCICECandidate alloc] initWithMid:sdpMid
+                                                                       index:[sdpMLineIndex intValue]
+                                                                         sdp:sdp];
+        
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        [holder.connection addICECandidate:iceCandidate];
     }];
 }
 

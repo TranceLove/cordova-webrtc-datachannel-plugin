@@ -28,4 +28,6 @@
 
 -(void)setRemoteOffer:(CDVInvokedUrlCommand*)command;
 
+-(void)addIceCandidate:(CDVInvokedUrlCommand*)command;
+
 @end
