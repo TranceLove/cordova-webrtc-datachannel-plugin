@@ -6,6 +6,11 @@ var argscheck = require('cordova/argscheck'),
 
 var _peerConnections = {};
 
+function getRandomInt(min, max)
+{
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 if(!window.plugin)
 {
     window.plugin = {};
@@ -48,6 +53,33 @@ window.plugin.iosWebRTCPeerConnection = {
     }
 }
 
+function RTCDataChannel(label, options)
+{
+	this.binaryType = "arraybuffer";
+	this.bufferedAmount = 0;
+	this.id = options.id || getRandomInt(0, 65535);
+	this.label = label
+	this.maxRetransmitTime = 65535
+	this.maxRetransmits = 65535
+	this.negotiated = options.negotiated || false;
+	this.onclose = null;
+	this.onerror = null;
+	this.onmessage = null;
+	this.onopen = null;
+	this.ordered = options.ordered || true;
+	this.protocol = options.protocol || "";
+	this.readyState = "connecting";
+	this.reliable = true;
+}
+
+RTCDataChannel.prototype.send = function(){
+	
+}
+
+RTCDataChannel.prototype.close = function(){
+	
+}
+
 function RTCPeerConnection(options)
 {
     var self = this;
@@ -66,22 +98,33 @@ function RTCPeerConnection(options)
     this.signalingState = "stable"
 
     exec(function(result){
-        console.log(result);
         self.connectionID = result.connectionID;
         _peerConnections[connectionID] = self;
-    }, function(){}, "iosWebRTCPlugin", "createRTCPeerConnection", [options]);
+    }, function(err){
+    	console.error(err);
+    }, "iosWebRTCPlugin", "createRTCPeerConnection", [options]);
 }
 
 RTCPeerConnection.prototype.createDataChannel = function(label, options){
-
+	
+	var connectionID = this.connectionID;	
+	var retval = new RTCDataChannel(label, options);
+	
+	exec(function(result){
+		console.log(result)
+	}, function(err){
+		
+	}, "iosWebRTCPlugin", "createDataChannel", [connectionID, label, options]);
+	
+	return retval;
 }
 
 RTCPeerConnection.prototype.createOffer = function(callback){
-
+	var connectionID = this.connectionID;
 }
 
 RTCPeerConnection.prototype.createAnswer = function(callback){
-
+	var connectionID = this.connectionID;
 }
 
 RTCPeerConnection.prototype.setLocalDescription = function(sessionDescription){
