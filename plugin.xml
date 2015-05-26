@@ -16,5 +16,11 @@
         </config-file>
         <header-file src="src/ios/iosWebRTCPlugin.h" />
         <source-file src="src/ios/iosWebRTCPlugin.m" />
+        <header-file src="src/ios/PeerConnectionObserver.h" />
+        <source-file src="src/ios/PeerConnectionObserver.m" />
+        <header-file src="src/ios/RTCPeerConnectionHolder+Internal.h" />
+        <source-file src="src/ios/RTCPeerConnectionHolder+Internal.m" />
+        <header-file src="src/ios/RTCSessionDescriptionObserver+Internal.h" />
+        <source-file src="src/ios/RTCSessionDescriptionObserver+Internal.m" />
     </platform>
 </plugin>
