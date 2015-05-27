@@ -63,6 +63,7 @@ NSMutableDictionary *_connections;
 
         NSArray *optionalConstraints = [[NSArray alloc] initWithObjects:
                                         [[RTCPair alloc] initWithKey: @"RtpDataChannels" value: @"true"],
+                                        [[RTCPair alloc] initWithKey: @"internalSctpDataChannels" value: @"true"],
                                         [[RTCPair alloc] initWithKey: @"DtlsSrtpKeyAgreement" value: @"true"],
                                         nil
                                         ];
@@ -154,7 +155,7 @@ NSMutableDictionary *_connections;
         NSLog(@"Options: %@", options);
 
         RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
-        
+
         NSLog(@"SessionDescription: %@, %@", sdp.type, sdp.description);
 
         RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
