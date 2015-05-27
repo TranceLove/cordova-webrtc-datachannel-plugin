@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.nxtomo.cordova.ios.webrtc" version="0.0.1">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="plugin.ios.webrtc" version="0.0.1">
     <name>iosWebRTCPlugin</name>
     <description>iOS WebRTC Plugin</description>
     <platform name="ios">
