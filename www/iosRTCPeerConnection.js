@@ -128,7 +128,7 @@ RTCPeerConnection.prototype.createOffer = function(callback){
 	var connectionID = this.connectionID;
 
     exec(function(result){
-        console.log(result)
+        callback(result)
     }, function(err){
         console.error(err);
     }, "iosWebRTCPlugin", "createLocalOffer", [connectionID]);
@@ -138,13 +138,14 @@ RTCPeerConnection.prototype.createAnswer = function(callback){
     var connectionID = this.connectionID;
 
     exec(function(result){
-        console.log(result)
+        callback(result)
     }, function(err){
         console.error(err);
     }, "iosWebRTCPlugin", "createAnswer", [connectionID]);
 }
 
 RTCPeerConnection.prototype.setLocalDescription = function(sessionDescription){
+    console.log(sessionDescription)
     this.localDescription = sessionDescription;
     var connectionID = this.connectionID;
 

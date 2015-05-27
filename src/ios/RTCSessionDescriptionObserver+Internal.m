@@ -42,7 +42,20 @@
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didSetSessionDescriptionWithError:(NSError *)error
 {
+    NSLog(@"Have error? %d", error != nil);
 
+    CDVPluginResult *result = nil;
+    if(error != nil)
+    {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                   messageAsString:error.description];
+    }
+    else
+    {
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }
+    
+    [_delegate sendPluginResult:result callbackId:_command.callbackId];
 }
 
 @end

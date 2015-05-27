@@ -36,12 +36,14 @@
 //RTCPeerConnection.ondatachannel
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didOpenDataChannel:(RTCDataChannel *)dataChannel
 {
-
+    NSLog(@"Data channel opened: %@", dataChannel.label);
 }
 
 //RTCPeerConnection.onicecandidate
 -(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCICECandidate *)candidate
 {
+    NSLog(@"Got ICE candidate: %@", candidate.sdp);
+    
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                             candidate.sdp, @"sdp",
                             candidate.sdpMid, @"sdpMid",
@@ -67,7 +69,7 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCICEConnectionState)newState
 {
     NSString *state;
-
+    
     switch(newState)
     {
         case RTCICEConnectionNew:
@@ -92,6 +94,8 @@
             state = @"failed";
             break;
     }
+    
+    NSLog(@"ICE connection state changed: %@", state);
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", _connectionID, state];
 
@@ -115,6 +119,8 @@
             state = @"complete";
             break;
     }
+    
+    NSLog(@"ICE gathering state changed: %@", state);
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", _connectionID, state];
 
@@ -153,6 +159,8 @@
             state = @"stable";
             break;
     }
+    
+    NSLog(@"Signaling state changed: %@", state);
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", _connectionID, state];
 
