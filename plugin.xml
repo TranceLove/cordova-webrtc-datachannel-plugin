@@ -9,6 +9,9 @@
         <js-module src="www/iosRTCSessionDescription.js" name="iosRTCSessionDescription">
             <clobbers target="window.iosRTCSessionDescription" />
         </js-module>
+        <js-module src="www/iosRTCIceCandidate.js" name="iosRTCIceCandidate">
+            <clobbers target="window.iosRTCIceCandidate" />
+        </js-module>
         <config-file target="config.xml" parent="/*">
             <feature name="iosWebRTCPlugin">
                 <param name="ios-package" value="iosWebRTCPlugin"/>
