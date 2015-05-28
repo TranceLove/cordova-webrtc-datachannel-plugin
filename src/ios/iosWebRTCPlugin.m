@@ -157,8 +157,6 @@ NSMutableDictionary *_connections;
 
         RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
 
-        NSLog(@"SessionDescription: %@, %@", sdp.type, sdp.description);
-
         RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
 
         RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
