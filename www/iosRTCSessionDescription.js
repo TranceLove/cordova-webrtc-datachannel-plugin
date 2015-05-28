@@ -5,7 +5,6 @@ var VALID_TYPES = [
 
 function RTCSessionDescription(sessionDescription)
 {
-    console.log(sessionDescription)
     this.type = sessionDescription.type;
     this.sdp = sessionDescription.sdp;
 }
