@@ -64,7 +64,7 @@
     NSString *sdpMLineIndex = nil;
     if(candidate.sdpMLineIndex >= 0)
     {
-        sdpMLineIndex = [NSString stringWithFormat: @"%ld", candidate.sdpMLineIndex];
+        sdpMLineIndex = [NSString stringWithFormat: @"%d", candidate.sdpMLineIndex];
     }
     else
     {
@@ -75,7 +75,7 @@
     }
 
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                            candidate.sdp, @"sdp",
+                            candidate.sdp, @"candidate",
                             candidate.sdpMid, @"sdpMid",
                             sdpMLineIndex, @"sdpMLineIndex",
                           nil];

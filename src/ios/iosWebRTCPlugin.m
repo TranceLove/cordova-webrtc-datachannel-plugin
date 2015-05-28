@@ -210,18 +210,25 @@ NSMutableDictionary *_connections;
     [self.commandDelegate runInBackground:^{
         NSString *connectionID = [command argumentAtIndex:0];
         NSDictionary *iceCandidateInfo = [command argumentAtIndex:1];
+        
+        NSLog(@"ICE candidate info: %@", iceCandidateInfo);
 
         NSString *sdpMid = [iceCandidateInfo valueForKey:@"sdpMid"];
         NSString *sdpMLineIndex = [iceCandidateInfo valueForKey:@"sdpMLineIndex"];
-        NSString *sdp = [iceCandidateInfo valueForKey:@"sdp"];
+        NSString *sdp = [iceCandidateInfo valueForKey:@"candidate"];
 
         RTCICECandidate *iceCandidate = [[RTCICECandidate alloc] initWithMid:sdpMid
                                                                        index:[sdpMLineIndex intValue]
                                                                          sdp:sdp];
+        NSLog(@"Attach ICE candidate: %@", iceCandidate);
 
         RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
 
         [holder.connection addICECandidate:iceCandidate];
+        
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
 
