@@ -46,4 +46,8 @@
 
 -(void)addIceCandidate:(CDVInvokedUrlCommand*)command;
 
+-(void)sendDataOnDataChannel:(CDVInvokedUrlCommand*)command;
+
+-(void)sendStringOnDataChannel:(CDVInvokedUrlCommand*)command;
+
 @end

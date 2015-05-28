@@ -30,6 +30,16 @@
 #import "PeerConnectionObserver.h"
 #import "RTCSessionDescriptionObserver+Internal.h"
 
+@interface iosWebRTCPlugin()
+
+-(void)_doSendDataOnDataChannel:(NSString *)connectionID
+               dataChannelLabel:(NSString *)dataChannelLabel
+                           data:(NSData *)data
+                       isBinary:(BOOL)isBinary
+                        command:(CDVInvokedUrlCommand*)command;
+
+@end
+
 @implementation iosWebRTCPlugin
 
 RTCPeerConnectionFactory *factory;
@@ -231,5 +241,54 @@ NSMutableDictionary *_connections;
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
+
+-(void)_doSendDataOnDataChannel:(NSString *)connectionID
+               dataChannelLabel:(NSString *)dataChannelLabel
+                           data:(NSData *)data
+                       isBinary:(BOOL)isBinary
+                        command:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate runInBackground:^{
+        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        
+        RTCDataChannel *channel = [holder.dataChannels valueForKey:dataChannelLabel];
+        
+        CDVPluginResult *result;
+        
+        @try
+        {
+            [channel sendData:[[RTCDataBuffer alloc] initWithData:data isBinary:isBinary]];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat: @"%ld", (unsigned long)data.length], @"length", nil]];
+        }
+        @catch (NSException *exception)
+        {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        }
+        @finally
+        {
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        }
+    }];
+}
+
+-(void)sendStringOnDataChannel:(CDVInvokedUrlCommand *)command
+{
+    NSString *connectionID = [command argumentAtIndex:0];
+    NSString *dataChannelLabel = [command argumentAtIndex:1];
+    NSString *string = [command argumentAtIndex:2];
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [self _doSendDataOnDataChannel:connectionID dataChannelLabel:dataChannelLabel data:data isBinary:NO command:command];
+}
+
+-(void)sendDataOnDataChannel:(CDVInvokedUrlCommand *)command
+{
+    NSString *connectionID = [command argumentAtIndex:0];
+    NSString *dataChannelLabel = [command argumentAtIndex:1];
+    NSData *data = [command argumentAtIndex:2];
+    
+    [self _doSendDataOnDataChannel:connectionID dataChannelLabel:dataChannelLabel data:data isBinary:YES command:command];
+}
+
 
 @end
