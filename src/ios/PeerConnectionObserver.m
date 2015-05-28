@@ -14,6 +14,8 @@
 {
     id<CDVCommandDelegate> _delegate;
     NSString* _connectionID;
+    NSLock *sdpMLineIndexLock;
+    unsigned int _sdpMLineIndex;
 }
 
 -(id) initWithDelegate:(id<CDVCommandDelegate>)delegate
@@ -23,6 +25,7 @@
     {
         _delegate = delegate;
         _connectionID = connectionID;
+        _sdpMLineIndex = 0;
     }
     return self;
 }
@@ -42,14 +45,29 @@
 //RTCPeerConnection.onicecandidate
 -(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCICECandidate *)candidate
 {
+    NSString *sdpMLineIndex = nil;
+    if(candidate.sdpMLineIndex >= 0)
+    {
+        sdpMLineIndex = [NSString stringWithFormat: @"%ld", candidate.sdpMLineIndex];
+    }
+    else
+    {
+        sdpMLineIndex = [NSString stringWithFormat: @"%d", _sdpMLineIndex];
+        [sdpMLineIndexLock lock];
+        _sdpMLineIndex++;
+        [sdpMLineIndexLock unlock];
+    }
+
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                             candidate.sdp, @"sdp",
                             candidate.sdpMid, @"sdpMid",
-                            candidate.sdpMLineIndex, @"sdpMLineIndex",
+                            sdpMLineIndex, @"sdpMLineIndex",
                           nil];
 
     if([NSJSONSerialization isValidJSONObject:dict])
     {
+        NSLog(@"Dict: %@", dict);
+
         NSError *err = nil;
         NSData *data = [NSJSONSerialization dataWithJSONObject:dict
                                                        options:nil
@@ -58,8 +76,6 @@
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.onicecandidate('%@', %@);",
                         _connectionID, iceCandidateJson];
-        
-        NSLog(@"Output JS: [%@]", js);
 
         [_delegate evalJs:js];
     }
@@ -69,7 +85,7 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCICEConnectionState)newState
 {
     NSString *state;
-    
+
     switch(newState)
     {
         case RTCICEConnectionNew:
@@ -94,7 +110,7 @@
             state = @"failed";
             break;
     }
-    
+
     NSLog(@"ICE connection state changed: %@", state);
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", _connectionID, state];
@@ -119,7 +135,7 @@
             state = @"complete";
             break;
     }
-    
+
     NSLog(@"ICE gathering state changed: %@", state);
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", _connectionID, state];
@@ -159,7 +175,7 @@
             state = @"stable";
             break;
     }
-    
+
     NSLog(@"Signaling state changed: %@", state);
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", _connectionID, state];
