@@ -79,7 +79,8 @@ NSMutableDictionary *_connections;
 
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
                                                                                              mediaConstraints:constraints
-                                                                                                 connectionID:connectionID];
+                                                                                                connectionID:connectionID
+                                                                                           connectionObserver:observer];
 
         [_connections setValue:connectionHolder forKey:connectionID];
 

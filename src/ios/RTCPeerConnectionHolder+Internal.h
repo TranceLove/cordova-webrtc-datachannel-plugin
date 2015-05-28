@@ -11,6 +11,7 @@
 
 #import "RTCPeerConnection.h"
 #import "RTCMediaConstraints.h"
+#import "PeerConnectionObserver.h"
 
 @interface RTCPeerConnectionHolder : NSObject
 
@@ -19,10 +20,12 @@
 @property (atomic,strong) RTCMediaConstraints* mediaConstraints;
 //@property (nonatomic) NSString* provisionalCallbackID;
 @property (nonatomic) NSMutableDictionary *dataChannels;
+@property (atomic,strong) PeerConnectionObserver *connectionObserver;
 
 -(id)initWithRTCPeerConnection: (RTCPeerConnection*) connection
               mediaConstraints: (RTCMediaConstraints*) mediaConstraints
-                  connectionID: (NSString*) connectionID;
+                  connectionID: (NSString*) connectionID
+            connectionObserver: (PeerConnectionObserver*) connectionObserver;
 
 @end
 
