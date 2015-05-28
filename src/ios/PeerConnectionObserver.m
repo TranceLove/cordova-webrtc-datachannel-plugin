@@ -42,8 +42,6 @@
 //RTCPeerConnection.onicecandidate
 -(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCICECandidate *)candidate
 {
-    NSLog(@"Got ICE candidate: %@", candidate.sdp);
-    
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                             candidate.sdp, @"sdp",
                             candidate.sdpMid, @"sdpMid",
@@ -54,12 +52,14 @@
     {
         NSError *err = nil;
         NSData *data = [NSJSONSerialization dataWithJSONObject:dict
-                                        options:NSJSONWritingPrettyPrinted
-                                          error:&err];
+                                                       options:nil
+                                                         error:&err];
         NSString *iceCandidateJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-        NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCConnection.onicecandidate('%@', %@);",
+        NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.onicecandidate('%@', %@);",
                         _connectionID, iceCandidateJson];
+        
+        NSLog(@"Output JS: [%@]", js);
 
         [_delegate evalJs:js];
     }
