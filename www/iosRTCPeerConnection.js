@@ -168,6 +168,13 @@ RTCPeerConnection.prototype.setRemoteDescription = function(sessionDescription){
 }
 
 RTCPeerConnection.prototype.addIceCandidate = function(iceCandidate){
+    var connectionID = this.connectionID;
+
+    exec(function(result){
+        console.log(result)
+    }, function(err){
+        console.error(err);
+    }, "iosWebRTCPlugin", "addIceCandidate", [connectionID, iceCandidate]);
 
 }
 
