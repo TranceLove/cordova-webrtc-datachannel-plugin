@@ -64,7 +64,7 @@
     NSString *sdpMLineIndex = nil;
     if(candidate.sdpMLineIndex >= 0)
     {
-        sdpMLineIndex = [NSString stringWithFormat: @"%d", candidate.sdpMLineIndex];
+        sdpMLineIndex = [NSString stringWithFormat: @"%ld", (long)candidate.sdpMLineIndex];
     }
     else
     {
