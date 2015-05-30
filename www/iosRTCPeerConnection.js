@@ -48,7 +48,7 @@ window.plugin.iosWebRTCPeerConnection = {
             var pc = _peerConnections[connectionID];
             pc.signalingState = state;
             if(pc.onsignalingstatechange)
-                pc.onsignalingstatechange(/*?*/state);
+                pc.onsignalingstatechange(state);
         }
     },
     iceGatheringStateChanged: function(connectionID, state){
@@ -66,7 +66,7 @@ window.plugin.iosWebRTCPeerConnection = {
             var pc = _peerConnections[connectionID];
             pc.iceConnectionState = state;
             if(pc.oniceconnectionstatechange)
-                pc.oniceconnectionstatechange(/*?*/state);
+                pc.oniceconnectionstatechange(state);
         }
     },
     onicecandidate: function(connectionID, iceCandidateJson){
@@ -168,24 +168,28 @@ RTCPeerConnection.prototype.createAnswer = function(callback){
     }, "iosWebRTCPlugin", "createAnswer", [connectionID]);
 }
 
-RTCPeerConnection.prototype.setLocalDescription = function(sessionDescription){
+RTCPeerConnection.prototype.setLocalDescription = function(sessionDescription, callback){
     console.log(sessionDescription)
     this.localDescription = sessionDescription;
     var connectionID = this.connectionID;
 
     exec(function(result){
         console.log(result)
+        if(callback)
+          callback();
     }, function(err){
         console.error(err);
     }, "iosWebRTCPlugin", "setLocalOffer", [connectionID, sessionDescription]);
 }
 
-RTCPeerConnection.prototype.setRemoteDescription = function(sessionDescription){
+RTCPeerConnection.prototype.setRemoteDescription = function(sessionDescription, callback){
     this.remoteDescription = sessionDescription;
     var connectionID = this.connectionID;
 
     exec(function(result){
         console.log(result)
+        if(callback)
+          callback();
     }, function(err){
         console.error(err);
     }, "iosWebRTCPlugin", "setRemoteOffer", [connectionID, sessionDescription]);
