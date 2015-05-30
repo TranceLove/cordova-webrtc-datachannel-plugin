@@ -75,7 +75,7 @@ window.plugin.iosWebRTCPeerConnection = {
         {
             var pc = _peerConnections[connectionID];
             if(pc.onicecandidate)
-                pc.onicecandidate(iceCandidateJson);
+                pc.onicecandidate({candidate:iceCandidateJson});
         }
     }
 }
