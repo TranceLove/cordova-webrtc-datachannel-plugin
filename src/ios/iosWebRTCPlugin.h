@@ -50,4 +50,8 @@
 
 -(void)sendStringOnDataChannel:(CDVInvokedUrlCommand*)command;
 
+-(void)closeDataChannel:(CDVInvokedUrlCommand*)command;
+
+-(void)closeRTCPeerConnection:(CDVInvokedUrlCommand*)command;
+
 @end

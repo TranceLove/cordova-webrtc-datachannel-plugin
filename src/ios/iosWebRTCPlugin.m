@@ -38,6 +38,13 @@
                        isBinary:(BOOL)isBinary
                         command:(CDVInvokedUrlCommand*)command;
 
+-(void)_doCloseDataChannel:(NSString *)connectionID
+          dataChannelLabel:(NSString *)dataChannelLabel
+                   command:(CDVInvokedUrlCommand*)command;
+
+-(void)_doCloseRTCPeerConnection:(NSString *)connectionID
+                         command:(CDVInvokedUrlCommand *)command;
+
 @end
 
 @implementation iosWebRTCPlugin
@@ -290,5 +297,56 @@ NSMutableDictionary *_connections;
     [self _doSendDataOnDataChannel:connectionID dataChannelLabel:dataChannelLabel data:data isBinary:YES command:command];
 }
 
+-(void)_doCloseDataChannel:(NSString *)connectionID
+          dataChannelLabel:(NSString *)dataChannelLabel
+                   command:(CDVInvokedUrlCommand *)command
+{
+    RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+    
+    RTCDataChannel *channel = [holder.dataChannels valueForKey:dataChannelLabel];
+    
+    if(channel.state == kRTCDataChannelStateOpen)
+    {
+        [channel close];
+    }
+}
+
+-(void)closeDataChannel:(CDVInvokedUrlCommand *)command
+{
+    NSString *connectionID = [command argumentAtIndex:0];
+    NSString *dataChannelLabel = [command argumentAtIndex:1];
+    
+    [self _doCloseDataChannel:connectionID
+             dataChannelLabel:dataChannelLabel
+                      command:command];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+-(void)_doCloseRTCPeerConnection:(NSString *)connectionID command:(CDVInvokedUrlCommand *)command
+{
+    RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+    
+    for(NSString *dataChannelLabel in holder.dataChannels)
+    {
+        [self _doCloseDataChannel:connectionID dataChannelLabel:dataChannelLabel command:command];
+    }
+    
+    [holder.connection close];
+}
+
+-(void)closeRTCPeerConnection:(CDVInvokedUrlCommand *)command
+{
+    NSString *connectionID = [command argumentAtIndex:0];
+    
+    [self _doCloseRTCPeerConnection:connectionID
+                            command:command];
+    
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
 
 @end
