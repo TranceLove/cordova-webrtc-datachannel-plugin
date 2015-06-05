@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+cordova.define("plugin.ios.webrtc.iosRTCSessionDescription", function(require, exports, module) {
 
 var VALID_TYPES = [
     "offer", "answer", "pranswer"
@@ -33,3 +34,5 @@ function RTCSessionDescription(sessionDescription)
 }
 
 module.exports = RTCSessionDescription;
+
+});

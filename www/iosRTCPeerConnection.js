@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+cordova.define("plugin.ios.webrtc.iosRTCPeerConnection", function(require, exports, module) {
 
 var argscheck = require('cordova/argscheck'),
     channel = require('cordova/channel'),
@@ -29,6 +30,7 @@ var argscheck = require('cordova/argscheck'),
     cordova = require('cordova');
 
 var _peerConnections = {};
+var _dataChannels = {};
 
 function getRandomInt(min, max)
 {
@@ -77,6 +79,34 @@ window.plugin.iosWebRTCPeerConnection = {
             if(pc.onicecandidate)
                 pc.onicecandidate({candidate:iceCandidateJson});
         }
+    },
+    ondatachannel: function(connectionID, dataChannelInfo){
+        console.log("Connection " + connectionID + " ondatachannel: " + JSON.stringify(dataChannelInfo));
+        if(_peerConnections[connectionID])
+        {
+            var pc = _peerConnections[connectionID];
+            var dataChannels = _dataChannels[connectionID];
+            if(dataChannels == null || typeof dataChannels == "undefined")
+            {
+                dataChannels = {};
+                _dataChannels[connectionID] = dataChannels;
+            }
+            var dc;
+            if(dataChannels[dataChannelInfo.label])
+            {
+                dc = dataChannels[dataChannelInfo.label];
+            }
+            else
+            {
+                dc = new RTCDataChannel(dataChannelInfo.label, dataChannelInfo);
+                dataChannels[dataChannelInfo.label] = dc;
+            }
+
+            console.log("Invoke ondatachannel with", dc);
+
+            if(pc.ondatachannel)
+                pc.ondatachannel(dc);
+        }
     }
 }
 
@@ -107,7 +137,7 @@ RTCDataChannel.prototype.close = function(){
 
 }
 
-function RTCPeerConnection(options)
+function RTCPeerConnection(options, callback)
 {
     var self = this;
 
@@ -128,6 +158,7 @@ function RTCPeerConnection(options)
         console.log(result)
         self.connectionID = result.connectionID;
         _peerConnections[result.connectionID] = self;
+        callback(self)
     }, function(err){
     	console.error(err);
     }, "iosWebRTCPlugin", "createRTCPeerConnection", [options]);
@@ -174,7 +205,7 @@ RTCPeerConnection.prototype.setLocalDescription = function(sessionDescription, c
     var connectionID = this.connectionID;
 
     exec(function(result){
-        console.log(result)
+        console.log("setLocalOffer result", result)
         if(callback)
           callback();
     }, function(err){
@@ -187,7 +218,7 @@ RTCPeerConnection.prototype.setRemoteDescription = function(sessionDescription, 
     var connectionID = this.connectionID;
 
     exec(function(result){
-        console.log(result)
+        console.log("setRemoteDescription result", result)
         if(callback)
           callback();
     }, function(err){
@@ -207,3 +238,5 @@ RTCPeerConnection.prototype.addIceCandidate = function(iceCandidate){
 }
 
 module.exports = RTCPeerConnection;
+
+});

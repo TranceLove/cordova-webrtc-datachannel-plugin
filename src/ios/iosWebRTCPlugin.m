@@ -206,7 +206,7 @@ NSMutableDictionary *_connections;
         NSDictionary *options = [command argumentAtIndex:1];
 
         NSLog(@"Options: %@", options);
-
+        
         RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
         
         NSLog(@"sdp: %@", sdp);
@@ -265,7 +265,8 @@ NSMutableDictionary *_connections;
         @try
         {
             [channel sendData:[[RTCDataBuffer alloc] initWithData:data isBinary:isBinary]];
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat: @"%ld", (unsigned long)data.length], @"length", nil]];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                   messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat: @"%ld", (unsigned long)data.length], @"length", nil]];
         }
         @catch (NSException *exception)
         {

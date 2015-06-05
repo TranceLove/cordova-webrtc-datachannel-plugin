@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+cordova.define("plugin.ios.webrtc.iosRTCIceCandidate", function(require, exports, module) {
 
 function RTCIceCandidate(iceCandidateJson)
 {
@@ -30,3 +31,5 @@ function RTCIceCandidate(iceCandidateJson)
 }
 
 module.exports = RTCIceCandidate;
+
+});

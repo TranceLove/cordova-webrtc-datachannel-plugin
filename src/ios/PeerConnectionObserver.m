@@ -55,7 +55,63 @@
 //RTCPeerConnection.ondatachannel
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didOpenDataChannel:(RTCDataChannel *)dataChannel
 {
-    NSLog(@"Data channel opened: %@", dataChannel.label);
+    NSLog(@"Data channel opened");
+    
+    NSString *readyState;
+    
+    switch(dataChannel.state)
+    {
+        case kRTCDataChannelStateOpen:
+            readyState = @"open";
+            break;
+        case kRTCDataChannelStateClosed:
+            readyState = @"closed";
+            break;
+        case kRTCDataChannelStateClosing:
+            readyState = @"closing";
+            break;
+        case kRTCDataChannelStateConnecting:
+            readyState = @"connecting";
+            break;
+    }
+    
+    NSLog(@"Label: %@", dataChannel.label);
+    NSLog(@"Protocol? %@", dataChannel.protocol);
+    NSLog(@"Stream ID: %d", dataChannel.streamId);
+    NSLog(@"Max retransmits: %d", dataChannel.maxRetransmits);
+    NSLog(@"Max retransmit time: %d", dataChannel.maxRetransmitTime);
+    NSLog(@"Negotiated? %d", dataChannel.isNegotiated ? 1 : 0);
+    NSLog(@"Ordered? %d", dataChannel.isOrdered ? 1 : 0);
+    NSLog(@"Reliable? %d", dataChannel.isReliable ? 1 : 0);
+    NSLog(@"Ready state: %@", readyState);
+    
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                          dataChannel.label, @"label",
+                          dataChannel.protocol, @"protocol",
+                          [NSNumber numberWithLong:dataChannel.streamId], @"id",
+                          [NSNumber numberWithUnsignedLong:dataChannel.maxRetransmits], @"maxRetransmits",
+                          [NSNumber numberWithUnsignedLong:dataChannel.maxRetransmitTime], @"maxRetransmitTime",
+                          dataChannel.isNegotiated, @"negotiated",
+                          dataChannel.isOrdered, @"ordered",
+                          dataChannel.isReliable, @"reliable",
+                          readyState, @"readyState",
+                          nil];
+    
+    if([NSJSONSerialization isValidJSONObject:dict])
+    {
+        NSLog(@"dict: %@", dict);
+        
+        NSError *err = nil;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict
+                                                       options:nil
+                                                         error:&err];
+        NSString *dataChannelJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        
+        NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.ondatachannel('%@', %@);",
+                        _connectionID, dataChannelJson];
+        
+        [_delegate evalJs:js];
+    }
 }
 
 //RTCPeerConnection.onicecandidate
