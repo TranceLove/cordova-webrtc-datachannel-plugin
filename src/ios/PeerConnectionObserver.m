@@ -25,6 +25,7 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
 #import "PeerConnectionObserver.h"
+#import <Cordova/NSData+Base64.h>
 
 @implementation PeerConnectionObserver
 {
@@ -52,14 +53,70 @@
 
 }
 
+//RTCDataChannel.onMessage
 -(void) channel:(RTCDataChannel *)channel didReceiveMessageWithBuffer:(RTCDataBuffer *)buffer
 {
+    NSString *receivedData;
+    NSString *dataType;
+    NSUInteger length = buffer.data.length;
+
+    //FIXME: Converting NSData to base64 can cause app to run out of memory!
+    if(buffer.isBinary)
+    {
+        dataType = @"binary";
+        receivedData = [buffer.data cdv_base64EncodedString];
+    }
+    else
+    {
+        dataType = @"string";
+        receivedData = [[NSString alloc] initWithData:buffer.data encoding:NSUTF8StringEncoding];
+    }
     
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
+                          dataType, @"type",
+                          length, @"length",
+                          receivedData, @"data",
+                          nil];
+    
+    if([NSJSONSerialization isValidJSONObject:dict])
+    {
+        NSError *err = nil;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dict
+                                                       options:nil
+                                                         error:&err];
+        NSString *messageObj = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+        NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelOnMessage('%@', '%@', %@);",
+                    self.connectionID, channel.label, messageObj];
+    
+        [self.delegate evalJs:js];
+    }
 }
 
 -(void) channelDidChangeState:(RTCDataChannel *)channel
 {
+    NSString *readyState;
     
+    switch(channel.state)
+    {
+        case kRTCDataChannelStateOpen:
+            readyState = @"open";
+            break;
+        case kRTCDataChannelStateClosed:
+            readyState = @"closed";
+            break;
+        case kRTCDataChannelStateClosing:
+            readyState = @"closing";
+            break;
+        case kRTCDataChannelStateConnecting:
+            readyState = @"connecting";
+            break;
+    }
+    
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelStateChanged('%@', '%@', '%@');",
+                    self.connectionID, channel.label, readyState];
+    
+    [self.delegate evalJs:js];
 }
 
 //RTCPeerConnection.ondatachannel
