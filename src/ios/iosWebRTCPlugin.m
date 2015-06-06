@@ -101,18 +101,21 @@ NSMutableDictionary *_connections;
 
         RTCMediaConstraints *constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints
                                                                                  optionalConstraints:optionalConstraints];
+        
+        NSMutableDictionary *dataChannels = [[NSMutableDictionary alloc]init];
 
         PeerConnectionObserver *observer = [[PeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
-                                                                               connectionID:connectionID];
+                                                                               connectionID:connectionID
+                                                                               dataChannels:dataChannels];
 
         RTCPeerConnection *connection = [factory peerConnectionWithICEServers:iceServers
                                                                   constraints:constraints
                                                                      delegate:observer];
 
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
-                                                                                             mediaConstraints:constraints
-                                                                                                connectionID:connectionID
-                                                                                           connectionObserver:observer];
+                                                                                             mediaConstraints:constraints                                                                                                connectionID:connectionID
+                                                                                           connectionObserver:observer
+                                                                                                 dataChannels:dataChannels];
 
         [_connections setValue:connectionHolder forKey:connectionID];
 

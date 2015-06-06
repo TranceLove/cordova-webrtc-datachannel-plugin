@@ -28,20 +28,20 @@
 
 @implementation PeerConnectionObserver
 {
-    id<CDVCommandDelegate> _delegate;
-    NSString* _connectionID;
     NSLock *sdpMLineIndexLock;
     unsigned int _sdpMLineIndex;
 }
 
 -(id) initWithDelegate:(id<CDVCommandDelegate>)delegate
           connectionID:(NSString *)connectionID
+          dataChannels:(NSMutableDictionary *)dataChannelsHolder
 {
     if([super init])
     {
         _delegate = delegate;
         _connectionID = connectionID;
         _sdpMLineIndex = 0;
+        _dataChannelsHolder = dataChannelsHolder;
     }
     return self;
 }
@@ -50,6 +50,16 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection addedStream:(RTCMediaStream *)stream
 {
 
+}
+
+-(void) channel:(RTCDataChannel *)channel didReceiveMessageWithBuffer:(RTCDataBuffer *)buffer
+{
+    
+}
+
+-(void) channelDidChangeState:(RTCDataChannel *)channel
+{
+    
 }
 
 //RTCPeerConnection.ondatachannel
@@ -77,9 +87,9 @@
     
     NSLog(@"Label: %@", dataChannel.label);
     NSLog(@"Protocol? %@", dataChannel.protocol);
-    NSLog(@"Stream ID: %d", dataChannel.streamId);
-    NSLog(@"Max retransmits: %d", dataChannel.maxRetransmits);
-    NSLog(@"Max retransmit time: %d", dataChannel.maxRetransmitTime);
+    NSLog(@"Stream ID: %ld", dataChannel.streamId);
+    NSLog(@"Max retransmits: %ld", dataChannel.maxRetransmits);
+    NSLog(@"Max retransmit time: %ld", dataChannel.maxRetransmitTime);
     NSLog(@"Negotiated? %d", dataChannel.isNegotiated ? 1 : 0);
     NSLog(@"Ordered? %d", dataChannel.isOrdered ? 1 : 0);
     NSLog(@"Reliable? %d", dataChannel.isReliable ? 1 : 0);
@@ -99,6 +109,9 @@
     
     if([NSJSONSerialization isValidJSONObject:dict])
     {
+        dataChannel.delegate = self;
+        [self.dataChannelsHolder setValue:dataChannel forKey:dataChannel.label];
+        
         NSLog(@"dict: %@", dict);
         
         NSError *err = nil;
@@ -108,9 +121,9 @@
         NSString *dataChannelJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.ondatachannel('%@', %@);",
-                        _connectionID, dataChannelJson];
+                        self.connectionID, dataChannelJson];
         
-        [_delegate evalJs:js];
+        [self.delegate evalJs:js];
     }
 }
 
@@ -147,9 +160,9 @@
         NSString *iceCandidateJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.onicecandidate('%@', %@);",
-                        _connectionID, iceCandidateJson];
+                        self.connectionID, iceCandidateJson];
 
-        [_delegate evalJs:js];
+        [self.delegate evalJs:js];
     }
 }
 
@@ -185,9 +198,9 @@
 
     NSLog(@"ICE connection state changed: %@", state);
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", _connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", self.connectionID, state];
 
-    [_delegate evalJs:js];
+    [self.delegate evalJs:js];
 }
 
 //No counter part. But still need to notify JS interface
@@ -210,9 +223,9 @@
 
     NSLog(@"ICE gathering state changed: %@", state);
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", _connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", self.connectionID, state];
 
-    [_delegate evalJs:js];
+    [self.delegate evalJs:js];
 }
 
 //RTCPeerConnection.onremovestream
@@ -250,9 +263,9 @@
 
     NSLog(@"Signaling state changed: %@", state);
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", _connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", self.connectionID, state];
 
-    [_delegate evalJs:js];
+    [self.delegate evalJs:js];
 }
 
 //RTCPeerConnection.onnegotiationneeded

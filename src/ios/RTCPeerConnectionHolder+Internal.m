@@ -31,18 +31,20 @@
               mediaConstraints:(RTCMediaConstraints *)mediaConstraints
                   connectionID:(NSString *)connectionID
             connectionObserver:(PeerConnectionObserver *)connectionObserver
+                  dataChannels:(NSMutableDictionary *)dataChannels
 
 {
     if([super init])
     {
-        self.connectionID = connectionID;
-        self.mediaConstraints = mediaConstraints;
-        self.connection = connection;
-        self.connectionObserver = connectionObserver;
-        self.dataChannels = [[NSMutableDictionary alloc]init];
+        _connectionID = connectionID;
+        _mediaConstraints = mediaConstraints;
+        _connection = connection;
+        _connectionObserver = connectionObserver;
+        _dataChannels = dataChannels;
     }
 
     return self;
 }
+
 
 @end
