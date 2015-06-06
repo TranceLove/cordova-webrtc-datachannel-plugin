@@ -110,8 +110,9 @@ window.plugin.iosWebRTCPeerConnection = {
     }
 }
 
-function RTCDataChannel(label, options)
+function RTCDataChannel(connectionID, label, options)
 {
+    this.connectionID = connectionID;
 	this.binaryType = "arraybuffer";
 	this.bufferedAmount = 0;
 	this.id = options.id || getRandomInt(0, 65535); //FIXME: unsafe
@@ -129,12 +130,27 @@ function RTCDataChannel(label, options)
 	this.reliable = true;
 }
 
-RTCDataChannel.prototype.send = function(){
+RTCDataChannel.prototype.send = function(data, callback){
+    var self = this;
+    var command = "sendDataOnDataChannel";
+    if(typeof data === "string")
+        command = "sendStringOnDataChannel";
 
+    exec(function(result){
+        if(callback)
+            callback(result);
+    }, function(err){
+        console.error(err)
+    }, "iosWebRTCPlugin", command, [self.connectionID, self.label, data]);
 }
 
-RTCDataChannel.prototype.close = function(){
-
+RTCDataChannel.prototype.close = function(callback){
+    exec(function(result){
+        if(callback)
+            callback(result)
+    }, function(err){
+        console.error(err)
+    }, "iosWebRTCPlugin", "closeDataChannel", [self.connectionID, self.label]);
 }
 
 function RTCPeerConnection(options, callback)
@@ -164,13 +180,13 @@ function RTCPeerConnection(options, callback)
     }, "iosWebRTCPlugin", "createRTCPeerConnection", [options]);
 }
 
-RTCPeerConnection.prototype.createDataChannel = function(label, options){
+RTCPeerConnection.prototype.createDataChannel = function(label, options, callback){
 
 	var connectionID = this.connectionID;
-	var retval = new RTCDataChannel(label, options);
+	var retval = new RTCDataChannel(connectionID, label, options);
 
 	exec(function(result){
-		console.log(result)
+        callback(retval)
 	}, function(err){
         console.error(err);
 	}, "iosWebRTCPlugin", "createDataChannel", [connectionID, label, options]);
@@ -235,6 +251,18 @@ RTCPeerConnection.prototype.addIceCandidate = function(iceCandidate){
         console.error(err);
     }, "iosWebRTCPlugin", "addIceCandidate", [connectionID, iceCandidate]);
 
+}
+
+RTCPeerConnection.prototype.close = function(callback){
+    var connectionID = this.connectionID;
+
+    exec(function(result){
+        console.log("closeRTCPeerConnection result", result)
+        if(callback)
+          callback();
+    }, function(err){
+        console.error(err);
+    }, "iosWebRTCPlugin", "closeRTCPeerConnection", [connectionID, sessionDescription]);
 }
 
 module.exports = RTCPeerConnection;
