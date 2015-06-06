@@ -98,7 +98,10 @@ window.plugin.iosWebRTCPeerConnection = {
             }
             else
             {
-                dc = new RTCDataChannel(dataChannelInfo.label, dataChannelInfo);
+                dc = new RTCDataChannel(connectionID, dataChannelInfo.label, dataChannelInfo);
+                dc.readyState = dataChannelInfo.readyState;
+                dc.maxRetransmits = dataChannelInfo.maxRetransmits;
+                dc.maxRetransmitTime = dataChannelInfo.maxRetransmitTime;
                 dataChannels[dataChannelInfo.label] = dc;
             }
 
@@ -106,6 +109,37 @@ window.plugin.iosWebRTCPeerConnection = {
 
             if(pc.ondatachannel)
                 pc.ondatachannel(dc);
+        }
+    },
+    dataChannelOnMessage: function(connectionID, label, messageObj){
+        if(_peerConnections[connectionID])
+        {
+            var pc = _peerConnections[connectionID];
+            var dataChannels = _dataChannels[connectionID];
+            if(dataChannels != null)
+            {
+                var dc = dataChannels[label];
+                if(dc != null && dc.readyState == "open")
+                {
+                    if(dc.onmessage)
+                        dc.onmessage(messageObj);
+                }
+            }
+        }
+    },
+    dataChannelStateChanged: function(connectionID, label, state){
+        if(_peerConnections[connectionID])
+        {
+            var pc = _peerConnections[connectionID];
+            var dataChannels = _dataChannels[connectionID];
+            if(dataChannels != null)
+            {
+                var dc = dataChannels[label];
+                if(dc != null && dc.readyState == "open")
+                {
+                    dc.readyState = state;
+                }
+            }
         }
     }
 }
@@ -127,7 +161,7 @@ function RTCDataChannel(connectionID, label, options)
 	this.ordered = options.ordered || true;
 	this.protocol = options.protocol || "";
 	this.readyState = "connecting";
-	this.reliable = true;
+	this.reliable = options.reliable || true;
 }
 
 RTCDataChannel.prototype.send = function(data, callback){
