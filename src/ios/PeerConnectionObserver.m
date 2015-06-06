@@ -53,7 +53,7 @@
 
 }
 
-//RTCDataChannel.onMessage
+//RTCDataChannel.onmessage
 -(void) channel:(RTCDataChannel *)channel didReceiveMessageWithBuffer:(RTCDataBuffer *)buffer
 {
     NSString *receivedData;
@@ -71,13 +71,13 @@
         dataType = @"string";
         receivedData = [[NSString alloc] initWithData:buffer.data encoding:NSUTF8StringEncoding];
     }
-    
+
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                           dataType, @"type",
                           length, @"length",
                           receivedData, @"data",
                           nil];
-    
+
     if([NSJSONSerialization isValidJSONObject:dict])
     {
         NSError *err = nil;
@@ -88,15 +88,16 @@
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelOnMessage('%@', '%@', %@);",
                     self.connectionID, channel.label, messageObj];
-    
+
         [self.delegate evalJs:js];
     }
 }
 
+//No counter part. But still need to notify JS interface
 -(void) channelDidChangeState:(RTCDataChannel *)channel
 {
     NSString *readyState;
-    
+
     switch(channel.state)
     {
         case kRTCDataChannelStateOpen:
@@ -112,10 +113,10 @@
             readyState = @"connecting";
             break;
     }
-    
+
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelStateChanged('%@', '%@', '%@');",
                     self.connectionID, channel.label, readyState];
-    
+
     [self.delegate evalJs:js];
 }
 
@@ -123,9 +124,9 @@
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didOpenDataChannel:(RTCDataChannel *)dataChannel
 {
     NSLog(@"Data channel opened");
-    
+
     NSString *readyState;
-    
+
     switch(dataChannel.state)
     {
         case kRTCDataChannelStateOpen:
@@ -141,7 +142,7 @@
             readyState = @"connecting";
             break;
     }
-    
+
     NSLog(@"Label: %@", dataChannel.label);
     NSLog(@"Protocol? %@", dataChannel.protocol);
     NSLog(@"Stream ID: %ld", dataChannel.streamId);
@@ -151,7 +152,7 @@
     NSLog(@"Ordered? %d", dataChannel.isOrdered ? 1 : 0);
     NSLog(@"Reliable? %d", dataChannel.isReliable ? 1 : 0);
     NSLog(@"Ready state: %@", readyState);
-    
+
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                           dataChannel.label, @"label",
                           dataChannel.protocol, @"protocol",
@@ -163,23 +164,23 @@
                           dataChannel.isReliable, @"reliable",
                           readyState, @"readyState",
                           nil];
-    
+
     if([NSJSONSerialization isValidJSONObject:dict])
     {
         dataChannel.delegate = self;
         [self.dataChannelsHolder setValue:dataChannel forKey:dataChannel.label];
-        
+
         NSLog(@"dict: %@", dict);
-        
+
         NSError *err = nil;
         NSData *data = [NSJSONSerialization dataWithJSONObject:dict
                                                        options:nil
                                                          error:&err];
         NSString *dataChannelJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        
+
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.ondatachannel('%@', %@);",
                         self.connectionID, dataChannelJson];
-        
+
         [self.delegate evalJs:js];
     }
 }
