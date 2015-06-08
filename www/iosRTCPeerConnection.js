@@ -121,6 +121,7 @@ window.plugin.iosWebRTCPeerConnection = {
                 var dc = dataChannels[label];
                 if(dc != null && dc.readyState == "open")
                 {
+                    console.log("invoke dataChannelOnMessage", connectionID, label, messageObj)
                     if(dc.onmessage)
                         dc.onmessage(messageObj);
                 }
@@ -135,9 +136,15 @@ window.plugin.iosWebRTCPeerConnection = {
             if(dataChannels != null)
             {
                 var dc = dataChannels[label];
-                if(dc != null && dc.readyState == "open")
+                if(dc != null)
                 {
+                    console.log("Data channel state changed", state)
                     dc.readyState = state;
+
+                    if(state === "open" && dc.onopen)
+                    {
+                        dc.onopen();
+                    }
                 }
             }
         }
