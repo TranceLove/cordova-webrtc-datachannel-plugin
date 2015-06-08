@@ -74,7 +74,7 @@
 
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                           dataType, @"type",
-                          length, @"length",
+                          [NSNumber numberWithUnsignedLong: length], @"length",
                           receivedData, @"data",
                           nil];
 

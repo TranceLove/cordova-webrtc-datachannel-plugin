@@ -39,11 +39,9 @@
                         command:(CDVInvokedUrlCommand*)command;
 
 -(void)_doCloseDataChannel:(NSString *)connectionID
-          dataChannelLabel:(NSString *)dataChannelLabel
-                   command:(CDVInvokedUrlCommand*)command;
+          dataChannelLabel:(NSString *)dataChannelLabel;
 
--(void)_doCloseRTCPeerConnection:(NSString *)connectionID
-                         command:(CDVInvokedUrlCommand *)command;
+-(void)_doCloseRTCPeerConnection:(NSString *)connectionID;
 
 @end
 
@@ -63,7 +61,10 @@ NSMutableDictionary *_connections;
 -(void)onAppTerminate
 {
     [RTCPeerConnectionFactory deinitializeSSL];
-    //TODO: cut off all current connections
+    for(NSString *connectionID in _connections)
+    {
+        [self _doCloseRTCPeerConnection: connectionID];
+    }
     [super onAppTerminate];
 }
 
@@ -303,7 +304,6 @@ NSMutableDictionary *_connections;
 
 -(void)_doCloseDataChannel:(NSString *)connectionID
           dataChannelLabel:(NSString *)dataChannelLabel
-                   command:(CDVInvokedUrlCommand *)command
 {
     RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
     
@@ -321,21 +321,20 @@ NSMutableDictionary *_connections;
     NSString *dataChannelLabel = [command argumentAtIndex:1];
     
     [self _doCloseDataChannel:connectionID
-             dataChannelLabel:dataChannelLabel
-                      command:command];
+             dataChannelLabel:dataChannelLabel];
     
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
--(void)_doCloseRTCPeerConnection:(NSString *)connectionID command:(CDVInvokedUrlCommand *)command
+-(void)_doCloseRTCPeerConnection:(NSString *)connectionID
 {
     RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
     
     for(NSString *dataChannelLabel in holder.dataChannels)
     {
-        [self _doCloseDataChannel:connectionID dataChannelLabel:dataChannelLabel command:command];
+        [self _doCloseDataChannel:connectionID dataChannelLabel:dataChannelLabel];
     }
     
     [holder.connection close];
@@ -345,8 +344,7 @@ NSMutableDictionary *_connections;
 {
     NSString *connectionID = [command argumentAtIndex:0];
     
-    [self _doCloseRTCPeerConnection:connectionID
-                            command:command];
+    [self _doCloseRTCPeerConnection:connectionID];
     
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     
