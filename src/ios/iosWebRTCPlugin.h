@@ -32,6 +32,9 @@
 
 @interface iosWebRTCPlugin : CDVPlugin
 
+@property (atomic,readonly) RTCPeerConnectionFactory *factory;
+@property (atomic,readonly) NSMutableDictionary *connections;
+
 -(void)createRTCPeerConnection:(CDVInvokedUrlCommand*)command;
 
 -(void)createDataChannel:(CDVInvokedUrlCommand*)command;

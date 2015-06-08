@@ -47,21 +47,17 @@
 
 @implementation iosWebRTCPlugin
 
-RTCPeerConnectionFactory *factory;
-NSMutableDictionary *_connections;
-
 -(void)pluginInitialize
 {
     [RTCPeerConnectionFactory initializeSSL];
-    factory = [[RTCPeerConnectionFactory alloc] init];
-
+    _factory = [[RTCPeerConnectionFactory alloc] init];
     _connections = [[NSMutableDictionary alloc] init];
 }
 
 -(void)onAppTerminate
 {
     [RTCPeerConnectionFactory deinitializeSSL];
-    for(NSString *connectionID in _connections)
+    for(NSString *connectionID in self.connections)
     {
         [self _doCloseRTCPeerConnection: connectionID];
     }
@@ -109,7 +105,7 @@ NSMutableDictionary *_connections;
                                                                                connectionID:connectionID
                                                                                dataChannels:dataChannels];
 
-        RTCPeerConnection *connection = [factory peerConnectionWithICEServers:iceServers
+        RTCPeerConnection *connection = [self.factory peerConnectionWithICEServers:iceServers
                                                                   constraints:constraints
                                                                      delegate:observer];
 
@@ -118,7 +114,7 @@ NSMutableDictionary *_connections;
                                                                                            connectionObserver:observer
                                                                                                  dataChannels:dataChannels];
 
-        [_connections setValue:connectionHolder forKey:connectionID];
+        [self.connections setValue:connectionHolder forKey:connectionID];
 
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connectionID, @"connectionID", nil]];
 
@@ -132,7 +128,7 @@ NSMutableDictionary *_connections;
         NSString *connectionID = [command argumentAtIndex:0];
         NSString *label = [command argumentAtIndex:1];
 
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         RTCDataChannelInit *config = [[RTCDataChannelInit alloc] init];
 
@@ -155,7 +151,7 @@ NSMutableDictionary *_connections;
     [self.commandDelegate runInBackground:^{
         NSString *connectionID = [command argumentAtIndex:0];
 
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
                                                                                                   command:command
@@ -171,7 +167,7 @@ NSMutableDictionary *_connections;
     [self.commandDelegate runInBackground:^{
         NSString *connectionID = [command argumentAtIndex:0];
 
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
                                                                                                   command:command
@@ -192,7 +188,7 @@ NSMutableDictionary *_connections;
 
         RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
 
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
                                                                                                   command:command
@@ -215,7 +211,7 @@ NSMutableDictionary *_connections;
         
         NSLog(@"sdp: %@", sdp);
 
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         RTCSessionDescriptionObserver *observer = [[RTCSessionDescriptionObserver alloc] initWithDelegate:self.commandDelegate
                                                                                                   command:command
@@ -243,7 +239,7 @@ NSMutableDictionary *_connections;
                                                                          sdp:sdp];
         NSLog(@"Attach ICE candidate: %@", iceCandidate);
 
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         [holder.connection addICECandidate:iceCandidate];
         
@@ -260,7 +256,7 @@ NSMutableDictionary *_connections;
                         command:(CDVInvokedUrlCommand *)command
 {
     [self.commandDelegate runInBackground:^{
-        RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+        RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
         
         RTCDataChannel *channel = [holder.dataChannels valueForKey:dataChannelLabel];
         
@@ -305,7 +301,7 @@ NSMutableDictionary *_connections;
 -(void)_doCloseDataChannel:(NSString *)connectionID
           dataChannelLabel:(NSString *)dataChannelLabel
 {
-    RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+    RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
     
     RTCDataChannel *channel = [holder.dataChannels valueForKey:dataChannelLabel];
     
@@ -330,7 +326,7 @@ NSMutableDictionary *_connections;
 
 -(void)_doCloseRTCPeerConnection:(NSString *)connectionID
 {
-    RTCPeerConnectionHolder *holder = [_connections valueForKey:connectionID];
+    RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
     
     for(NSString *dataChannelLabel in holder.dataChannels)
     {
