@@ -23,7 +23,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "RTCPeerConnectionHolder+Internal.h"
+#import "RTCPeerConnectionHolder.h"
 
 @implementation RTCPeerConnectionHolder
 

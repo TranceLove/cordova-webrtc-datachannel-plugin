@@ -52,9 +52,9 @@
         <source-file src="src/ios/RTCPeerConnection+ConnectionID.m" />
         <header-file src="src/ios/RTCPeerConnectionFactory+ConnectionID.h" />
         <source-file src="src/ios/RTCPeerConnectionFactory+ConnectionID.m" />
-        <header-file src="src/ios/RTCPeerConnectionHolder+Internal.h" />
-        <source-file src="src/ios/RTCPeerConnectionHolder+Internal.m" />
-        <header-file src="src/ios/RTCSessionDescriptionObserver+Internal.h" />
-        <source-file src="src/ios/RTCSessionDescriptionObserver+Internal.m" />
+        <header-file src="src/ios/RTCPeerConnectionHolder.h" />
+        <source-file src="src/ios/RTCPeerConnectionHolder.m" />
+        <header-file src="src/ios/RTCSessionDescriptionObserver.h" />
+        <source-file src="src/ios/RTCSessionDescriptionObserver.m" />
     </platform>
 </plugin>

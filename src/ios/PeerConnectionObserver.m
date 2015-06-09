@@ -24,9 +24,9 @@
 
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
-#import "PeerConnectionObserver.h"
-#import "RTCPeerConnectionHolder+Internal.h"
 #import <Cordova/NSData+Base64.h>
+#import "PeerConnectionObserver.h"
+#import "RTCPeerConnectionHolder.h"
 
 @implementation PeerConnectionObserver
 {

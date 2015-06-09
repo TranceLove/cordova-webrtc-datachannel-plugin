@@ -24,11 +24,11 @@
 
 #import "iosWebRTCPlugin.h"
 #import "RTCPair.h"
-#import "RTCDataChannel+ConnectionID.h"
 #import "RTCICECandidate.h"
 #import "RTCSessionDescription.h"
+#import "RTCDataChannel+ConnectionID.h"
 #import "PeerConnectionObserver.h"
-#import "RTCSessionDescriptionObserver+Internal.h"
+#import "RTCSessionDescriptionObserver.h"
 
 @interface iosWebRTCPlugin()
 
@@ -100,7 +100,7 @@
 
         RTCMediaConstraints *constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints
                                                                                  optionalConstraints:optionalConstraints];
-        
+
         NSMutableDictionary *dataChannels = [[NSMutableDictionary alloc]init];
 
 
@@ -134,7 +134,7 @@
 
         RTCDataChannel *dataChannel = [holder.connection createDataChannelWithLabel:label
                                                                              config:config];
-        
+
         dataChannel.connectionID = connectionID;
 
         [holder.dataChannels setValue:dataChannel
@@ -209,9 +209,9 @@
         NSDictionary *options = [command argumentAtIndex:1];
 
         NSLog(@"Options: %@", options);
-        
+
         RTCSessionDescription *sdp = [[RTCSessionDescription alloc] initWithType:[options valueForKey:@"type"] sdp:[options valueForKey:@"sdp"]];
-        
+
         NSLog(@"sdp: %@", sdp);
 
         RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
@@ -230,7 +230,7 @@
     [self.commandDelegate runInBackground:^{
         NSString *connectionID = [command argumentAtIndex:0];
         NSDictionary *iceCandidateInfo = [command argumentAtIndex:1];
-        
+
         NSLog(@"ICE candidate info: %@", iceCandidateInfo);
 
         NSString *sdpMid = [iceCandidateInfo valueForKey:@"sdpMid"];
@@ -245,9 +245,9 @@
         RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
 
         [holder.connection addICECandidate:iceCandidate];
-        
+
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        
+
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
 }
@@ -260,11 +260,11 @@
 {
     [self.commandDelegate runInBackground:^{
         RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
-        
+
         RTCDataChannel *channel = [holder.dataChannels valueForKey:dataChannelLabel];
-        
+
         CDVPluginResult *result;
-        
+
         @try
         {
             [channel sendData:[[RTCDataBuffer alloc] initWithData:data isBinary:isBinary]];
@@ -288,7 +288,7 @@
     NSString *dataChannelLabel = [command argumentAtIndex:1];
     NSString *string = [command argumentAtIndex:2];
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    
+
     [self _doSendDataOnDataChannel:connectionID dataChannelLabel:dataChannelLabel data:data isBinary:NO command:command];
 }
 
@@ -297,7 +297,7 @@
     NSString *connectionID = [command argumentAtIndex:0];
     NSString *dataChannelLabel = [command argumentAtIndex:1];
     NSData *data = [command argumentAtIndex:2];
-    
+
     [self _doSendDataOnDataChannel:connectionID dataChannelLabel:dataChannelLabel data:data isBinary:YES command:command];
 }
 
@@ -305,9 +305,9 @@
           dataChannelLabel:(NSString *)dataChannelLabel
 {
     RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
-    
+
     RTCDataChannel *channel = [holder.dataChannels valueForKey:dataChannelLabel];
-    
+
     if(channel.state == kRTCDataChannelStateOpen)
     {
         [channel close];
@@ -318,35 +318,35 @@
 {
     NSString *connectionID = [command argumentAtIndex:0];
     NSString *dataChannelLabel = [command argumentAtIndex:1];
-    
+
     [self _doCloseDataChannel:connectionID
              dataChannelLabel:dataChannelLabel];
-    
+
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    
+
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 -(void)_doCloseRTCPeerConnection:(NSString *)connectionID
 {
     RTCPeerConnectionHolder *holder = [self.connections valueForKey:connectionID];
-    
+
     for(NSString *dataChannelLabel in holder.dataChannels)
     {
         [self _doCloseDataChannel:connectionID dataChannelLabel:dataChannelLabel];
     }
-    
+
     [holder.connection close];
 }
 
 -(void)closeRTCPeerConnection:(CDVInvokedUrlCommand *)command
 {
     NSString *connectionID = [command argumentAtIndex:0];
-    
+
     [self _doCloseRTCPeerConnection:connectionID];
-    
+
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    
+
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 

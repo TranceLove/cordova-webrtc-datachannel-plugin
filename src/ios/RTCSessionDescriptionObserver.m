@@ -24,7 +24,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
-#import "RTCSessionDescriptionObserver+Internal.h"
+#import "RTCSessionDescriptionObserver.h"
 
 @implementation RTCSessionDescriptionObserver
 {

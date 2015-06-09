@@ -29,7 +29,7 @@
 #import "RTCMediaConstraints.h"
 #import "PeerConnectionObserver.h"
 #import "RTCPeerConnectionFactory+ConnectionID.h"
-#import "RTCPeerConnectionHolder+Internal.h"
+#import "RTCPeerConnectionHolder.h"
 
 @interface iosWebRTCPlugin : CDVPlugin
 

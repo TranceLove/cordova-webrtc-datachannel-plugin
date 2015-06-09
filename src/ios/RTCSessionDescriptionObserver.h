@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 #ifndef WebRTCApp_RTCSessionDescriptionObserver_Internal_h
 #define WebRTCApp_RTCSessionDescriptionObserver_Internal_h
 
@@ -29,7 +29,7 @@
 #import <Cordova/CDV.h>
 #import "RTCSessionDescription.h"
 #import "RTCSessionDescriptionDelegate.h"
-#import "RTCPeerConnectionHolder+Internal.h"
+#import "RTCPeerConnectionHolder.h"
 
 @interface RTCSessionDescriptionObserver : NSObject<RTCSessionDescriptionDelegate>
 
