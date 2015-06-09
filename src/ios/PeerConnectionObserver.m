@@ -34,13 +34,11 @@
 }
 
 -(id) initWithDelegate:(id<CDVCommandDelegate>)delegate
-          connectionID:(NSString *)connectionID
           dataChannels:(NSMutableDictionary *)dataChannelsHolder
 {
     if([super init])
     {
         _delegate = delegate;
-        _connectionID = connectionID;
         _sdpMLineIndex = 0;
         _dataChannelsHolder = dataChannelsHolder;
     }
@@ -87,7 +85,7 @@
         NSString *messageObj = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelOnMessage('%@', '%@', %@);",
-                    self.connectionID, channel.label, messageObj];
+                    channel.connectionID, channel.label, messageObj];
 
         [self.delegate evalJs:js];
     }
@@ -115,7 +113,7 @@
     }
 
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelStateChanged('%@', '%@', '%@');",
-                    self.connectionID, channel.label, readyState];
+                    channel.connectionID, channel.label, readyState];
 
     [self.delegate evalJs:js];
 }
@@ -145,9 +143,9 @@
 
     NSLog(@"Label: %@", dataChannel.label);
     NSLog(@"Protocol? %@", dataChannel.protocol);
-    NSLog(@"Stream ID: %ld", dataChannel.streamId);
-    NSLog(@"Max retransmits: %ld", dataChannel.maxRetransmits);
-    NSLog(@"Max retransmit time: %ld", dataChannel.maxRetransmitTime);
+    NSLog(@"Stream ID: %d", dataChannel.streamId);
+    NSLog(@"Max retransmits: %d", dataChannel.maxRetransmits);
+    NSLog(@"Max retransmit time: %d", dataChannel.maxRetransmitTime);
     NSLog(@"Negotiated? %d", dataChannel.isNegotiated ? 1 : 0);
     NSLog(@"Ordered? %d", dataChannel.isOrdered ? 1 : 0);
     NSLog(@"Reliable? %d", dataChannel.isReliable ? 1 : 0);
@@ -168,6 +166,7 @@
     if([NSJSONSerialization isValidJSONObject:dict])
     {
         dataChannel.delegate = self;
+        dataChannel.connectionID = peerConnection.connectionID;
         [self.dataChannelsHolder setValue:dataChannel forKey:dataChannel.label];
 
         NSLog(@"dict: %@", dict);
@@ -179,7 +178,7 @@
         NSString *dataChannelJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.ondatachannel('%@', %@);",
-                        self.connectionID, dataChannelJson];
+                        peerConnection.connectionID, dataChannelJson];
 
         [self.delegate evalJs:js];
     }
@@ -218,7 +217,7 @@
         NSString *iceCandidateJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.onicecandidate('%@', %@);",
-                        self.connectionID, iceCandidateJson];
+                        peerConnection.connectionID, iceCandidateJson];
 
         [self.delegate evalJs:js];
     }
@@ -256,7 +255,7 @@
 
     NSLog(@"ICE connection state changed: %@", state);
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", self.connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", peerConnection.connectionID, state];
 
     [self.delegate evalJs:js];
 }
@@ -281,7 +280,7 @@
 
     NSLog(@"ICE gathering state changed: %@", state);
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", self.connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", peerConnection.connectionID, state];
 
     [self.delegate evalJs:js];
 }
@@ -321,7 +320,7 @@
 
     NSLog(@"Signaling state changed: %@", state);
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", self.connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", peerConnection.connectionID, state];
 
     [self.delegate evalJs:js];
 }

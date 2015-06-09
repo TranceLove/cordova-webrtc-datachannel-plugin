@@ -27,18 +27,16 @@
 
 #import <Cordova/CDVCommandDelegate.h>
 #import "RTCPeerConnectionDelegate.h"
-#import "RTCPeerConnection.h"
+#import "RTCPeerConnection+ConnectionID.h"
 #import "RTCICECandidate.h"
-#import "RTCDataChannel.h"
+#import "RTCDataChannel+ConnectionID.h"
 
 @interface PeerConnectionObserver : NSObject<RTCPeerConnectionDelegate, RTCDataChannelDelegate>
 
 @property (readonly) id<CDVCommandDelegate> delegate;
-@property (readonly) NSString* connectionID;
 @property (atomic,readonly) NSMutableDictionary *dataChannelsHolder;
 
 -(id)initWithDelegate: (id<CDVCommandDelegate>) delegate
-         connectionID: (NSString*) connectionID
          dataChannels: (NSMutableDictionary*) dataChannelsHolder;
 
 @end

@@ -25,7 +25,7 @@
 #ifndef WebRTCApp_RTCPeerConnection_Internal_h
 #define WebRTCApp_RTCPeerConnection_Internal_h
 
-#import "RTCPeerConnection.h"
+#import "RTCPeerConnection+ConnectionID.h"
 #import "RTCMediaConstraints.h"
 #import "PeerConnectionObserver.h"
 
@@ -39,7 +39,6 @@
 
 -(id)initWithRTCPeerConnection: (RTCPeerConnection*) connection
               mediaConstraints: (RTCMediaConstraints*) mediaConstraints
-                  connectionID: (NSString*) connectionID
             connectionObserver: (PeerConnectionObserver*) connectionObserver
                   dataChannels: (NSMutableDictionary*) dataChannels;
 

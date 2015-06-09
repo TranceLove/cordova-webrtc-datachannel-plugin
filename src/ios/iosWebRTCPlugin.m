@@ -24,7 +24,7 @@
 
 #import "iosWebRTCPlugin.h"
 #import "RTCPair.h"
-#import "RTCDataChannel.h"
+#import "RTCDataChannel+ConnectionID.h"
 #import "RTCICECandidate.h"
 #import "RTCSessionDescription.h"
 #import "PeerConnectionObserver.h"
@@ -102,15 +102,15 @@
         NSMutableDictionary *dataChannels = [[NSMutableDictionary alloc]init];
 
         PeerConnectionObserver *observer = [[PeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
-                                                                               connectionID:connectionID
                                                                                dataChannels:dataChannels];
 
         RTCPeerConnection *connection = [self.factory peerConnectionWithICEServers:iceServers
-                                                                  constraints:constraints
-                                                                     delegate:observer];
+                                                                       constraints:constraints
+                                                                          delegate:observer
+                                                                      connectionID:connectionID];
 
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
-                                                                                             mediaConstraints:constraints                                                                                                connectionID:connectionID
+                                                                                             mediaConstraints:constraints
                                                                                            connectionObserver:observer
                                                                                                  dataChannels:dataChannels];
 
@@ -134,11 +134,14 @@
 
         RTCDataChannel *dataChannel = [holder.connection createDataChannelWithLabel:label
                                                                              config:config];
+        
+        dataChannel.connectionID = connectionID;
 
         [holder.dataChannels setValue:dataChannel
                                forKey:label];
 
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connectionID, @"connectionID",
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                                                                   connectionID,@"connectionID",
                                                                                                                    label, @"label",
                                                                                                                    nil]];
 

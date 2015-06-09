@@ -29,14 +29,13 @@
 
 -(id)initWithRTCPeerConnection:(RTCPeerConnection *)connection
               mediaConstraints:(RTCMediaConstraints *)mediaConstraints
-                  connectionID:(NSString *)connectionID
             connectionObserver:(PeerConnectionObserver *)connectionObserver
                   dataChannels:(NSMutableDictionary *)dataChannels
 
 {
     if([super init])
     {
-        _connectionID = connectionID;
+        _connectionID = connection.connectionID;
         _mediaConstraints = mediaConstraints;
         _connection = connection;
         _connectionObserver = connectionObserver;
