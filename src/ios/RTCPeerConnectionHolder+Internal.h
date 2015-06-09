@@ -31,15 +31,12 @@
 
 @interface RTCPeerConnectionHolder : NSObject
 
-@property (atomic,strong,readonly) NSString* connectionID;
 @property (atomic,strong,readonly) RTCPeerConnection* connection;
 @property (atomic,strong,readonly) RTCMediaConstraints* mediaConstraints;
 @property (atomic,strong,readonly) NSMutableDictionary *dataChannels;
-@property (atomic,strong,readonly) PeerConnectionObserver *connectionObserver;
 
 -(id)initWithRTCPeerConnection: (RTCPeerConnection*) connection
               mediaConstraints: (RTCMediaConstraints*) mediaConstraints
-            connectionObserver: (PeerConnectionObserver*) connectionObserver
                   dataChannels: (NSMutableDictionary*) dataChannels;
 
 @end

@@ -27,6 +27,7 @@
 
 #import "RTCICEServer.h"
 #import "RTCMediaConstraints.h"
+#import "PeerConnectionObserver.h"
 #import "RTCPeerConnectionFactory+ConnectionID.h"
 #import "RTCPeerConnectionHolder+Internal.h"
 
@@ -34,6 +35,7 @@
 
 @property (atomic,readonly) RTCPeerConnectionFactory *factory;
 @property (atomic,readonly) NSMutableDictionary *connections;
+@property (atomic,readonly) PeerConnectionObserver *peerConnectionObserver;
 
 -(void)createRTCPeerConnection:(CDVInvokedUrlCommand*)command;
 

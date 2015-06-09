@@ -52,6 +52,8 @@
     [RTCPeerConnectionFactory initializeSSL];
     _factory = [[RTCPeerConnectionFactory alloc] init];
     _connections = [[NSMutableDictionary alloc] init];
+    _peerConnectionObserver = [[PeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
+                                                                   connections:self.connections];
 }
 
 -(void)onAppTerminate
@@ -101,17 +103,15 @@
         
         NSMutableDictionary *dataChannels = [[NSMutableDictionary alloc]init];
 
-        PeerConnectionObserver *observer = [[PeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
-                                                                               dataChannels:dataChannels];
+
 
         RTCPeerConnection *connection = [self.factory peerConnectionWithICEServers:iceServers
                                                                        constraints:constraints
-                                                                          delegate:observer
+                                                                          delegate:self.peerConnectionObserver
                                                                       connectionID:connectionID];
 
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
                                                                                              mediaConstraints:constraints
-                                                                                           connectionObserver:observer
                                                                                                  dataChannels:dataChannels];
 
         [self.connections setValue:connectionHolder forKey:connectionID];

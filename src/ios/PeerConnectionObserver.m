@@ -25,6 +25,7 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
 #import "PeerConnectionObserver.h"
+#import "RTCPeerConnectionHolder+Internal.h"
 #import <Cordova/NSData+Base64.h>
 
 @implementation PeerConnectionObserver
@@ -34,13 +35,13 @@
 }
 
 -(id) initWithDelegate:(id<CDVCommandDelegate>)delegate
-          dataChannels:(NSMutableDictionary *)dataChannelsHolder
+           connections:(NSDictionary *)connectionHolders
 {
     if([super init])
     {
         _delegate = delegate;
+        _connectionHolders = connectionHolders;
         _sdpMLineIndex = 0;
-        _dataChannelsHolder = dataChannelsHolder;
     }
     return self;
 }
@@ -167,7 +168,8 @@
     {
         dataChannel.delegate = self;
         dataChannel.connectionID = peerConnection.connectionID;
-        [self.dataChannelsHolder setValue:dataChannel forKey:dataChannel.label];
+        RTCPeerConnectionHolder *holder = [self.connectionHolders valueForKey:peerConnection.connectionID];
+        [holder.dataChannels setValue:dataChannel forKey:dataChannel.label];
 
         NSLog(@"dict: %@", dict);
 

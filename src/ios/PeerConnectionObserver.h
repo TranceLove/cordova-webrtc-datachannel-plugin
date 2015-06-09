@@ -34,10 +34,10 @@
 @interface PeerConnectionObserver : NSObject<RTCPeerConnectionDelegate, RTCDataChannelDelegate>
 
 @property (readonly) id<CDVCommandDelegate> delegate;
-@property (atomic,readonly) NSMutableDictionary *dataChannelsHolder;
+@property (readonly) NSDictionary* connectionHolders;
 
 -(id)initWithDelegate: (id<CDVCommandDelegate>) delegate
-         dataChannels: (NSMutableDictionary*) dataChannelsHolder;
+          connections: (NSDictionary *) connectionHolders;
 
 @end
 
