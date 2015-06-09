@@ -31,7 +31,7 @@
 #import "RTCICEServer.h"
 #import "RTCMediaConstraints.h"
 #import "RTCPeerConnectionObserver.h"
-#import "RTCPeerConnectionFactory+ConnectionID.h"
+#import "RTCPeerConnectionFactory.h"
 #import "RTCPeerConnectionHolder.h"
 
 @interface iosWebRTCPlugin : CDVPlugin

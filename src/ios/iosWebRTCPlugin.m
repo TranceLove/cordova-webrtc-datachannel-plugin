@@ -26,7 +26,7 @@
 #import "RTCPair.h"
 #import "RTCICECandidate.h"
 #import "RTCSessionDescription.h"
-#import "RTCDataChannel+ConnectionID.h"
+#import "RTCDataChannel.h"
 #import "RTCSessionDescriptionObserver.h"
 
 @interface iosWebRTCPlugin()

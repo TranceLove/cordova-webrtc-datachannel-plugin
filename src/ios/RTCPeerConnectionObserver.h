@@ -27,9 +27,9 @@
 
 #import <Cordova/CDVCommandDelegate.h>
 #import "RTCPeerConnectionDelegate.h"
-#import "RTCPeerConnection+ConnectionID.h"
+#import "RTCPeerConnection.h"
 #import "RTCICECandidate.h"
-#import "RTCDataChannel+ConnectionID.h"
+#import "RTCDataChannel.h"
 
 @interface RTCPeerConnectionObserver : NSObject<RTCPeerConnectionDelegate, RTCDataChannelDelegate>
 

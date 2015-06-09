@@ -25,7 +25,7 @@
 #ifndef WebRTCPlugin_RTCPeerConnectionHolder_h
 #define WebRTCPlugin_RTCPeerConnectionHolder_h
 
-#import "RTCPeerConnection+ConnectionID.h"
+#import "RTCPeerConnection.h"
 #import "RTCMediaConstraints.h"
 
 @interface RTCPeerConnectionHolder : NSObject
