@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+#import <objc/runtime.h>
 #import "iosWebRTCPlugin.h"
 #import "RTCPair.h"
 #import "RTCICECandidate.h"

@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+#import <objc/runtime.h>
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/NSData+Base64.h>
