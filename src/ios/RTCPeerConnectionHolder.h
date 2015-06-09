@@ -22,12 +22,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef WebRTCApp_RTCPeerConnection_Internal_h
-#define WebRTCApp_RTCPeerConnection_Internal_h
+#ifndef WebRTCPlugin_RTCPeerConnectionHolder_h
+#define WebRTCPlugin_RTCPeerConnectionHolder_h
 
 #import "RTCPeerConnection+ConnectionID.h"
 #import "RTCMediaConstraints.h"
-#import "PeerConnectionObserver.h"
 
 @interface RTCPeerConnectionHolder : NSObject
 

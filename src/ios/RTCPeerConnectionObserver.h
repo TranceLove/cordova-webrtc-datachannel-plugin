@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef WebRTCApp_PeerConnectionObserver_h
-#define WebRTCApp_PeerConnectionObserver_h
+#ifndef WebRTCPlugin_RTCPeerConnectionObserver_h
+#define WebRTCPlugin_RTCPeerConnectionObserver_h
 
 #import <Cordova/CDVCommandDelegate.h>
 #import "RTCPeerConnectionDelegate.h"
@@ -31,7 +31,7 @@
 #import "RTCICECandidate.h"
 #import "RTCDataChannel+ConnectionID.h"
 
-@interface PeerConnectionObserver : NSObject<RTCPeerConnectionDelegate, RTCDataChannelDelegate>
+@interface RTCPeerConnectionObserver : NSObject<RTCPeerConnectionDelegate, RTCDataChannelDelegate>
 
 @property (readonly) id<CDVCommandDelegate> delegate;
 @property (readonly) NSDictionary* connectionHolders;

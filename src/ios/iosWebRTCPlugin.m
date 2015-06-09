@@ -27,7 +27,6 @@
 #import "RTCICECandidate.h"
 #import "RTCSessionDescription.h"
 #import "RTCDataChannel+ConnectionID.h"
-#import "PeerConnectionObserver.h"
 #import "RTCSessionDescriptionObserver.h"
 
 @interface iosWebRTCPlugin()
@@ -52,7 +51,7 @@
     [RTCPeerConnectionFactory initializeSSL];
     _factory = [[RTCPeerConnectionFactory alloc] init];
     _connections = [[NSMutableDictionary alloc] init];
-    _peerConnectionObserver = [[PeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
+    _peerConnectionObserver = [[RTCPeerConnectionObserver alloc] initWithDelegate:self.commandDelegate
                                                                    connections:self.connections];
 }
 

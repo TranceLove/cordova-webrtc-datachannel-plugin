@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef WebRTCApp_RTCSessionDescriptionObserver_Internal_h
-#define WebRTCApp_RTCSessionDescriptionObserver_Internal_h
+#ifndef WebRTCPlugin_RTCSessionDescriptionObserver_h
+#define WebRTCPlugin_RTCSessionDescriptionObserver_h
 
 #import <Cordova/CDVCommandDelegate.h>
 #import <Cordova/CDV.h>

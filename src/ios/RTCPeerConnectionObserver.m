@@ -25,10 +25,10 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/NSData+Base64.h>
-#import "PeerConnectionObserver.h"
+#import "RTCPeerConnectionObserver.h"
 #import "RTCPeerConnectionHolder.h"
 
-@implementation PeerConnectionObserver
+@implementation RTCPeerConnectionObserver
 {
     NSLock *sdpMLineIndexLock;
     unsigned int _sdpMLineIndex;

@@ -22,12 +22,15 @@
  * THE SOFTWARE.
  */
 
+#ifndef WebRTCPlugin_iosWebRTCPlugin_h
+#define WebRTCPlugin_iosWebRTCPlugin_h
+
 #import <Foundation/Foundation.h>
 #import <Cordova/CDV.h>
 
 #import "RTCICEServer.h"
 #import "RTCMediaConstraints.h"
-#import "PeerConnectionObserver.h"
+#import "RTCPeerConnectionObserver.h"
 #import "RTCPeerConnectionFactory+ConnectionID.h"
 #import "RTCPeerConnectionHolder.h"
 
@@ -35,7 +38,7 @@
 
 @property (atomic,readonly) RTCPeerConnectionFactory *factory;
 @property (atomic,readonly) NSMutableDictionary *connections;
-@property (atomic,readonly) PeerConnectionObserver *peerConnectionObserver;
+@property (atomic,readonly) RTCPeerConnectionObserver *peerConnectionObserver;
 
 -(void)createRTCPeerConnection:(CDVInvokedUrlCommand*)command;
 
@@ -60,3 +63,5 @@
 -(void)closeRTCPeerConnection:(CDVInvokedUrlCommand*)command;
 
 @end
+
+#endif
