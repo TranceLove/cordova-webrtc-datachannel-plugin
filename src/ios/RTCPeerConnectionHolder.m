@@ -27,7 +27,7 @@
 
 @implementation RTCPeerConnectionHolder
 
--(id)initWithRTCPeerConnection:(RTCPeerConnection *)connection
+-(id)initWithRTCPeerConnection:(RTCPeerConnectionWithConnectionID *)connection
               mediaConstraints:(RTCMediaConstraints *)mediaConstraints
                   dataChannels:(NSMutableDictionary *)dataChannels
 

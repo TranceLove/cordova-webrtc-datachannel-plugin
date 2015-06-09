@@ -29,7 +29,7 @@
 #import "RTCPeerConnectionDelegate.h"
 #import "RTCPeerConnection.h"
 #import "RTCICECandidate.h"
-#import "RTCDataChannel.h"
+#import "RTCDataChannelWithConnectionID.h"
 
 @interface RTCPeerConnectionObserver : NSObject<RTCPeerConnectionDelegate, RTCDataChannelDelegate>
 

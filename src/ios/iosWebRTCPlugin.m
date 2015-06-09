@@ -22,12 +22,12 @@
  * THE SOFTWARE.
  */
 
-#import <objc/runtime.h>
 #import "iosWebRTCPlugin.h"
 #import "RTCPair.h"
 #import "RTCICECandidate.h"
 #import "RTCSessionDescription.h"
 #import "RTCDataChannel.h"
+#import "RTCPeerConnectionWithConnectionID.h"
 #import "RTCSessionDescriptionObserver.h"
 
 @interface iosWebRTCPlugin()
@@ -83,9 +83,6 @@
             [iceServers addObject: iceServer];
         }
 
-        //FIXME: UUID is so lame... can't I use random string here?
-        NSString *connectionID = [[NSUUID UUID] UUIDString];
-
         //TODO: Implement video and audio bridges
         NSArray *mandatoryConstraints = [[NSArray alloc] initWithObjects:
                                          [[RTCPair alloc] initWithKey: @"OfferToReceiveAudio" value: @"false"],
@@ -105,18 +102,19 @@
 
 
 
-        RTCPeerConnection *connection = [self.factory peerConnectionWithICEServers:iceServers
+        RTCPeerConnection *_connection = [self.factory peerConnectionWithICEServers:iceServers
                                                                        constraints:constraints
-                                                                          delegate:self.peerConnectionObserver
-                                                                      connectionID:connectionID];
+                                                                          delegate:self.peerConnectionObserver];
+
+        RTCPeerConnectionWithConnectionID *connection = [[RTCPeerConnectionWithConnectionID alloc] initWithRTCPeerConnection:_connection];
 
         RTCPeerConnectionHolder *connectionHolder = [[RTCPeerConnectionHolder alloc]initWithRTCPeerConnection:connection
                                                                                              mediaConstraints:constraints
                                                                                                  dataChannels:dataChannels];
 
-        [self.connections setValue:connectionHolder forKey:connectionID];
+        [self.connections setValue:connectionHolder forKey:connection.connectionID];
 
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connectionID, @"connectionID", nil]];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[NSDictionary dictionaryWithObjectsAndKeys:connection.connectionID, @"connectionID", nil]];
 
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
@@ -132,10 +130,11 @@
 
         RTCDataChannelInit *config = [[RTCDataChannelInit alloc] init];
 
-        RTCDataChannel *dataChannel = [holder.connection createDataChannelWithLabel:label
+        RTCDataChannel *_dataChannel = [holder.connection createDataChannelWithLabel:label
                                                                              config:config];
 
-        dataChannel.connectionID = connectionID;
+        RTCDataChannelWithConnectionID *dataChannel = [[RTCDataChannelWithConnectionID alloc] initWithRTCDataChannel:_dataChannel
+                                                                                                        connectionID:connectionID];
 
         [holder.dataChannels setValue:dataChannel
                                forKey:label];

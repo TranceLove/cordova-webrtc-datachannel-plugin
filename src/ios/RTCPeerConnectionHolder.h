@@ -25,16 +25,16 @@
 #ifndef WebRTCPlugin_RTCPeerConnectionHolder_h
 #define WebRTCPlugin_RTCPeerConnectionHolder_h
 
-#import "RTCPeerConnection.h"
+#import "RTCPeerConnectionWithConnectionID.h"
 #import "RTCMediaConstraints.h"
 
 @interface RTCPeerConnectionHolder : NSObject
 
-@property (atomic,strong,readonly) RTCPeerConnection* connection;
+@property (atomic,strong,readonly) RTCPeerConnectionWithConnectionID* connection;
 @property (atomic,strong,readonly) RTCMediaConstraints* mediaConstraints;
 @property (atomic,strong,readonly) NSMutableDictionary *dataChannels;
 
--(id)initWithRTCPeerConnection: (RTCPeerConnection*) connection
+-(id)initWithRTCPeerConnection: (RTCPeerConnectionWithConnectionID*) connection
               mediaConstraints: (RTCMediaConstraints*) mediaConstraints
                   dataChannels: (NSMutableDictionary*) dataChannels;
 

@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-#import <objc/runtime.h>
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPluginResult.h>
 #import <Cordova/NSData+Base64.h>
@@ -85,9 +84,10 @@
                                                        options:nil
                                                          error:&err];
         NSString *messageObj = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSString *connectionID = ((RTCDataChannelWithConnectionID*)channel).connectionID;
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelOnMessage('%@', '%@', %@);",
-                    channel.connectionID, channel.label, messageObj];
+                    connectionID, channel.label, messageObj];
 
         [self.delegate evalJs:js];
     }
@@ -114,16 +114,20 @@
             break;
     }
 
+    NSString *connectionID = ((RTCDataChannelWithConnectionID*)channel).connectionID;
     NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.dataChannelStateChanged('%@', '%@', '%@');",
-                    channel.connectionID, channel.label, readyState];
+                    connectionID, channel.label, readyState];
 
     [self.delegate evalJs:js];
 }
 
 //RTCPeerConnection.ondatachannel
--(void) peerConnection:(RTCPeerConnection *)peerConnection didOpenDataChannel:(RTCDataChannel *)dataChannel
+-(void) peerConnection:(RTCPeerConnection *)peerConnection didOpenDataChannel:(RTCDataChannel *)_dataChannel
 {
     NSLog(@"Data channel opened");
+    NSString *connectionID = ((RTCPeerConnectionWithConnectionID*)peerConnection).connectionID;
+    RTCDataChannelWithConnectionID *dataChannel = [[RTCDataChannelWithConnectionID alloc] initWithRTCDataChannel:_dataChannel
+                                                                                                    connectionID:connectionID];
 
     NSString *readyState;
 
@@ -167,9 +171,9 @@
 
     if([NSJSONSerialization isValidJSONObject:dict])
     {
+        NSString *connectionID = ((RTCPeerConnectionWithConnectionID*)peerConnection).connectionID;
         dataChannel.delegate = self;
-        dataChannel.connectionID = peerConnection.connectionID;
-        RTCPeerConnectionHolder *holder = [self.connectionHolders valueForKey:peerConnection.connectionID];
+        RTCPeerConnectionHolder *holder = [self.connectionHolders valueForKey:connectionID];
         [holder.dataChannels setValue:dataChannel forKey:dataChannel.label];
 
         NSLog(@"dict: %@", dict);
@@ -181,7 +185,7 @@
         NSString *dataChannelJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.ondatachannel('%@', %@);",
-                        peerConnection.connectionID, dataChannelJson];
+                        connectionID, dataChannelJson];
 
         [self.delegate evalJs:js];
     }
@@ -212,6 +216,7 @@
     if([NSJSONSerialization isValidJSONObject:dict])
     {
         NSLog(@"Dict: %@", dict);
+        NSString *connectionID = ((RTCPeerConnectionWithConnectionID*)peerConnection).connectionID;
 
         NSError *err = nil;
         NSData *data = [NSJSONSerialization dataWithJSONObject:dict
@@ -220,7 +225,7 @@
         NSString *iceCandidateJson = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
         NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.onicecandidate('%@', %@);",
-                        peerConnection.connectionID, iceCandidateJson];
+                        connectionID, iceCandidateJson];
 
         [self.delegate evalJs:js];
     }
@@ -257,8 +262,9 @@
     }
 
     NSLog(@"ICE connection state changed: %@", state);
+    NSString *connectionID = ((RTCPeerConnectionWithConnectionID*)peerConnection).connectionID;
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", peerConnection.connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.oniceconnectionstatechange('%@', '%@')", connectionID, state];
 
     [self.delegate evalJs:js];
 }
@@ -282,8 +288,9 @@
     }
 
     NSLog(@"ICE gathering state changed: %@", state);
+    NSString *connectionID = ((RTCPeerConnectionWithConnectionID*)peerConnection).connectionID;
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", peerConnection.connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.iceGatheringStateChanged('%@', '%@')", connectionID, state];
 
     [self.delegate evalJs:js];
 }
@@ -322,8 +329,9 @@
     }
 
     NSLog(@"Signaling state changed: %@", state);
+    NSString *connectionID = ((RTCPeerConnectionWithConnectionID*)peerConnection).connectionID;
 
-    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", peerConnection.connectionID, state];
+    NSString *js = [NSString stringWithFormat: @"plugin.iosWebRTCPeerConnection.signalingStateChanged('%@', '%@')", connectionID, state];
 
     [self.delegate evalJs:js];
 }

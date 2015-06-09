@@ -50,5 +50,9 @@
         <source-file src="src/ios/RTCPeerConnectionHolder.m" />
         <header-file src="src/ios/RTCSessionDescriptionObserver.h" />
         <source-file src="src/ios/RTCSessionDescriptionObserver.m" />
+        <header-file src="src/ios/RTCPeerConnectionWithConnectionID.h" />
+        <source-file src="src/ios/RTCPeerConnectionWithConnectionID.m" />
+        <header-file src="src/ios/RTCDataChannelWithConnectionID.h" />
+        <source-file src="src/ios/RTCDataChannelWithConnectionID.m" />
     </platform>
 </plugin>
