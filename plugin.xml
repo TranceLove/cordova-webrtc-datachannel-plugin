@@ -46,12 +46,6 @@
         <source-file src="src/ios/iosWebRTCPlugin.m" />
         <header-file src="src/ios/RTCPeerConnectionObserver.h" />
         <source-file src="src/ios/RTCPeerConnectionObserver.m" />
-        <header-file src="src/ios/RTCDataChannel+ConnectionID.h" />
-        <source-file src="src/ios/RTCDataChannel+ConnectionID.m" />
-        <header-file src="src/ios/RTCPeerConnection+ConnectionID.h" />
-        <source-file src="src/ios/RTCPeerConnection+ConnectionID.m" />
-        <header-file src="src/ios/RTCPeerConnectionFactory+ConnectionID.h" />
-        <source-file src="src/ios/RTCPeerConnectionFactory+ConnectionID.m" />
         <header-file src="src/ios/RTCPeerConnectionHolder.h" />
         <source-file src="src/ios/RTCPeerConnectionHolder.m" />
         <header-file src="src/ios/RTCSessionDescriptionObserver.h" />
